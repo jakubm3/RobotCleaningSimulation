@@ -23,11 +23,14 @@ Tile:
 Obstacle(Tile):
 	pola:
 	metody:
+		operator<< - wyœwietla jako symbol 'P'
 
 Floor(Tile):
 	pola: int cleanliness (0 znaczy czysty, max 9)
 	metody: getCleaned(), getDirty(int howDirty)
+		operator<< - wyœwietla jako cyfrê odpowiadaj¹c¹ poziomu czystoœci
 
 Charger:
 	pola:
 	metody:
+		operator<< - wyœwietla jako symbol 'B'
