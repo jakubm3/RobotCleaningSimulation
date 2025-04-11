@@ -7,7 +7,7 @@ Robot sprz¹taj¹cy przemieszcza siê po pod³odze i czyœci j¹. Raz na jakiœ czas mu
 
 Klasy:
 Room:
-	pola: int height, int width, (kolekcja) tiles
+	pola: int height, int width, (kolekcja) tiles, int robot_position
 	metody:
 		addRubbish(int howDirty, int id) - brudzi tile o podanym id (lub losowym jeœli nie podanym) o poziom howDirty
 		operator<< - wyœwietla aktualn¹ mapê
@@ -34,3 +34,14 @@ Charger:
 	pola:
 	metody:
 		operator<< - wyœwietla jako symbol 'B'
+
+
+
+Podzia³ obowi¹zków w zespole:
+
+
+
+Zadania:
+	- Stworzyæ klasê Tile i jego dzieci: Obstacle, Floor, Charger
+	- Stworzyæ klasê Room: pobiera uk³ad pomieszczenia z pliku i tworzy kolekcjê
+	- Plik g³ówny, który w wywo³aniu przyjmuje œcie¿kê pliku z planem pokoju
