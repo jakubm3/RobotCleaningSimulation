@@ -1,16 +1,16 @@
 # 209.1 Robot sprzatajacy
-Autorzy: Gabryel Jundzi³³, Jakub Adamczyk, Jakub Mierzejewski
+Autorzy: Gabryel Jundzill, Jakub Adamczyk, Jakub Mierzejewski
 
-Za³o¿enia projektu:
-Symulacja zawiera pokój bêd¹cy prostok¹tem. Sk³ada siê on z przeszkód, pod³ogi i ³adowarki.
-Robot sprz¹taj¹cy przemieszcza siê po pod³odze i czyœci j¹. Raz na jakiœ czas musi wróciæ do ³adowarki, aby uzupe³niæ bateriê.
+Zalozenia projektu:
+Symulacja zawiera pokoj bedacy prostokatem. Sklada sie on z przeszkod, podlogi i ladowarki.
+Robot sprzatajacy przemieszcza sie po podlodze i czysci ja. Raz na jakis czas musi wrocic do ladowarki, aby uzupe³nic baterie.
 
 Klasy:
 Room:
 	pola: int height, int width, (kolekcja) tiles, int robot_position
 	metody:
-		addRubbish(int howDirty, int id) - brudzi tile o podanym id (lub losowym jeœli nie podanym) o poziom howDirty
-		operator<< - wyœwietla aktualn¹ mapê
+		addRubbish(int howDirty, int id) - brudzi tile o podanym id (lub losowym jesli nie podanym) o poziom howDirty
+		operator<< - wyswietla aktualna mape
 
 Robot:
 	pola: int id (jego pozycja), batteryLevel 
@@ -23,25 +23,25 @@ Tile:
 Obstacle(Tile):
 	pola:
 	metody:
-		operator<< - wyœwietla jako symbol 'P'
+		operator<< - wyswietla jako symbol 'P'
 
 Floor(Tile):
 	pola: int cleanliness (0 znaczy czysty, max 9)
 	metody: getCleaned(), getDirty(int howDirty)
-		operator<< - wyœwietla jako cyfrê odpowiadaj¹c¹ poziomu czystoœci
+		operator<< - wyswietla jako cyfre odpowiadajsca poziomu czystosci
 
 Charger:
 	pola:
 	metody:
-		operator<< - wyœwietla jako symbol 'B'
+		operator<< - wyswietla jako symbol 'B'
 
 
 
-Podzia³ obowi¹zków w zespole:
+Podzial obowiazkow w zespole:
 
 
 
 Zadania:
-	- Stworzyæ klasê Tile i jego dzieci: Obstacle, Floor, Charger
-	- Stworzyæ klasê Room: pobiera uk³ad pomieszczenia z pliku i tworzy kolekcjê
-	- Plik g³ówny, który w wywo³aniu przyjmuje œcie¿kê pliku z planem pokoju
+	- Stworzyc klase Tile i jego dzieci: Obstacle, Floor, Charger
+	- Stworzyc klase Room: pobiera uk³ad pomieszczenia z pliku i tworzy kolekcje
+	- Plik glowny, ktory w wywolaniu przyjmuje sciezke pliku z planem pokoju
