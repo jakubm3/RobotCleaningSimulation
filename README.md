@@ -1,47 +1,95 @@
 # 209.1 Robot sprzatajacy
-Autorzy: Gabryel Jundzill, Jakub Adamczyk, Jakub Mierzejewski
+Authours: Gabryel Jundzill, Jakub Adamczyk, Jakub Mierzejewski
 
-Zalozenia projektu:
-Symulacja zawiera pokoj bedacy prostokatem. Sklada sie on z przeszkod, podlogi i ladowarki.
-Robot sprzatajacy przemieszcza sie po podlodze i czysci ja. Raz na jakis czas musi wrocic do ladowarki, aby uzupe³nic baterie.
+Project goals:
+Simulation takes path to a file as an argument which contains the plan of the room. It must be in the shape of rectangle.
+Room contains floors (marked as digits), obstacles (marked as 'P') and one charger (marked as 'B'). The robot always starts from its base (charger) and moves around (in 4 directions) in order to clean trash.
+Digits say how dirty is floor and how much time must be spent to clean that floor (0 means fully clean). Robot has its power level and must come back to charger to refill it.
+Example of visualisation of the room (robot is marked as 'X'):
+PPPPPPPPP
+P0010020P
+P100PP00P
+P0X0PP01P
+P000000BP
+PPPPPPPPP
+
+Class design:
 
 Klasy:
 Room:
-	pola: int height, int width, (kolekcja) tiles, int robot_position
-	metody:
-		addRubbish(int howDirty, int id) - brudzi tile o podanym id (lub losowym jesli nie podanym) o poziom howDirty
-		operator<< - wyswietla aktualna mape
+	fields: tiles (collection of unique pointers), Robot robot
+	methods:
+		addRubbish(int howDirty=1, int id=null) - sums the howDirty value with current mess level of the tile with given id (random id if not given)
+		operator<< - prints current status of map (it replaces one floor with 'X' on robot position)
+		operator>> - loads new room
+		findTileWithId(int id) - returns tile object with id or null
+		getWidth() - returns int (width of room)
+		getHeight() - returns int (height of room)
+		isRoomValid() - returns bool. Room must contain: only 1 charger; obstacle on every edge of room; every floor can be reached from base;
+		runSimulation(int simulationRuns) - spawns robot in charger and calls findTarget on it. Runs until robot says it has finished. Then dependent on simulation mode new trash appears or simulation is over;
 
 Robot:
-	pola: int id (jego pozycja), batteryLevel 
-	metody:
-
-Tile:
-	pola: int id (odpowiada pozycji w kolekcji klasy Room)
-	metody:
+	fields: int position (id of tile), int batteryLevel, vector<int> ignoredTiles, queue<int> path, bool finishedRun=false
+	methods:
+		findTarget() - returns id of target tile: Finds nearest trash; Checks if trash can be reached and if robot have enough battery to reach charger from it. 
+						If yes, this trash is new target. If not, the trash is added to ignoredTiles and again checks for trash. If none found, return to base. If in base, sets finishedRun on true
+		createPath(int targetId) - fills queue with IDs leading to target
+		move() - moves on next point from queue; calls cleanTile(position); uses 1 energy; (if accidentally in charger recharge?)
+		cleanTile(int tileId, int cleaningEfficiency=1) - calls getCleaned(cleaningEfficiency) on tile; uses 1 energy
+		recharge() - refills energy; removes every Tile from ignoredTiles
+		 
+Tile: (asbtract)
+	fields: int id (position in Room's collection)
+	methods: 
+		virtual operator<< 
+		virtual isMoveValid - returns bool; true if robot can step on it
 
 Obstacle(Tile):
-	pola:
-	metody:
-		operator<< - wyswietla jako symbol 'P'
+	fields:
+	methods:
+		operator<< - outputs 'P'
+		isMoveValid - returns false
 
 Floor(Tile):
-	pola: int cleanliness (0 znaczy czysty, max 9)
-	metody: getCleaned(), getDirty(int howDirty)
-		operator<< - wyswietla jako cyfre odpowiadajsca poziomu czystosci
+	fields: int cleanliness (value between 0-9; 0 means clean)
+	methods:
+		getCleaned(int efficiency=1) - reduces cleanliness
+		getDirty(int howDirty=1) - increaces cleanliness
+		operator<< - outputs cleanliness level
+		isMoveValid - returns true
 
-Charger:
-	pola:
-	metody:
-		operator<< - wyswietla jako symbol 'B'
+Charger(Tile):
+	fields:
+	methods:
+		operator<< - outputs 'B'
+		isMoveValid - returns true
+
+FileManager:
+	fields: simulationPath
+	methods:
+		operator<< streams file from simulationPath
+		operator>> creates or replaces file in simulationPath
 
 
+Team main responsibilities:
+	- Gabryel Jundzill: merging to main and documentation
+	- Jakub Mierzejewski: tests
+	- Jakub Adamczyk: tests
 
-Podzial obowiazkow w zespole:
 
+TASKS:
+Done:
+	- Pre-documentation - Gabryel Jundzill
+Current:
+	- Make main file with introduction to simulation - Gabryel Jundzill (24 April)
+	- Create Tile and its hierarhy (Obstacle, Floor, Charger) - Jakub Mierzejewski (27 April)
+	- Create Room class - Jakub Adamczyk (27 April)
+Future:
+	- Main file has interactable interface, simulation can be loaded from file
+	- Create Robot class
+	- Simulation can be runned
 
-
-Zadania:
-	- Stworzyc klase Tile i jego dzieci: Obstacle, Floor, Charger
-	- Stworzyc klase Room: pobiera uk³ad pomieszczenia z pliku i tworzy kolekcje
-	- Plik glowny, ktory w wywolaniu przyjmuje sciezke pliku z planem pokoju
+Milestones:
+	1. Simulation can be prepared from text file
+	2. Simulation can be runned and is printed on terminal
+	3. Simulation have multiple run modes
