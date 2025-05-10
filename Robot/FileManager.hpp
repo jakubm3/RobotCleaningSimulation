@@ -4,6 +4,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 template <typename T>
 class FileManager
@@ -22,18 +25,11 @@ private:
 public:
     FileManager() = default;
     ~FileManager() {
-        if (readingFile.is_open()) {
-            readingFile.close();
-        }
-        if (writingFile.is_open()) {
-            writingFile.close();
-        }
+        closeFiles();
     }
 
-    bool readingMode(const std::string& filePath) {
-        if (currMode != FileMode::none && readingFile.is_open()) {
-            readingFile.close();
-        }
+    bool readingMode(const fs::path& filePath) {
+        closeFiles();
 
         readingFile.open(filePath);
         if (!readingFile.is_open()) {
@@ -43,10 +39,9 @@ public:
         return true;
     }
 
-    bool writingMode(const std::string& filePath, bool overwrite = false) {
-        if (currMode != FileMode::none && readingFile.is_open()) {
-            readingFile.close();
-        }
+    bool writingMode(const fs::path& filePath, bool overwrite = false) {
+        closeFiles();
+
         writingFile.open(filePath, overwrite ? std::ios::trunc : std::ios::app);
         if (!writingFile.is_open()) {
             return false;
@@ -55,7 +50,7 @@ public:
         return true;
     }
 
-    void closeFile() {
+    void closeFiles() {
         if (readingFile.is_open()) {
             readingFile.close();
         }
@@ -84,43 +79,37 @@ public:
         return true;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const FileManager<T>& fm);
-    friend std::istream& operator>>(std::istream& is, FileManager<T>& fm);
+    bool loadFromFile(std::ostream& os) {
+        if (currMode != FileMode::read) {
+            return false;
+        }
+
+        // Save pointer position
+        std::streampos originalPos = readingFile.tellg();
+        readingFile.clear();
+        readingFile.seekg(0, std::ios::beg);
+
+        // Read whole file
+        std::string line;
+        while (std::getline(readingFile, line)) {
+            os << line << "\n";
+        }
+
+        // Restore pointer position
+        readingFile.clear();
+        readingFile.seekg(originalPos);
+        return true;
+    }
+
+    bool writeToFile(std::istream& is) {
+        if (currMode != FileMode::write) {
+            return false;
+        }
+
+        T data;
+        while (is >> data) {
+            write(data);
+        }
+        return true;
+    }
 };
-
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const FileManager<T>& fm) {
-    if (fm.currMode != FileManager<T>::FileMode::read) {
-        return os;
-    }
-
-    // Save pointer position
-    std::streampos originalPos = fm.readingFile.tellg();
-    fm.readingFile.clear();
-    fm.readingFile.seekg(0, std::ios::beg);
-
-    // Read whole file
-    std::string line;
-    while (std::getline(fm.readingFile, line)) {
-        os << line << "\n";
-    }
-
-    // Restore pointer position
-    fm.readingFile.clear();
-    fm.readingFile.seekg(originalPos);
-    return os;
-}
-
-template <typename T>
-std::istream& operator>>(std::istream& is, FileManager<T>& fm) {
-    if (fm.currMode != FileManager<T>::FileMode::read) {
-        return is;
-    }
-
-    T data;
-    while (is >> data) {
-        fm.write(data); 
-    }
-
-    return is;
-}

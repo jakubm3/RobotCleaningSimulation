@@ -1,13 +1,22 @@
 #include <iostream>
+#include <filesystem>
 #include "FileManager.hpp"
 
-int main(int argc, char* argv[]) {
+namespace fs = std::filesystem;
 
+int main(int argc, char* argv[]) {
+	FileManager<std::string> fm;
+	fs::path filePath;
+	
 	if (argc < 2) {
 		// No file given
 	}
 	else {
-
+		filePath = argv[1];
+		bool correctFile = false;
+		if (fs::exists(filePath)) {
+			correctFile = fm.readingMode(filePath);
+		}
 		// Try to load file
 	}
 
