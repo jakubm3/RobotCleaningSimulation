@@ -1,4 +1,5 @@
 #include <iostream>
+#include "FileManager.hpp"
 
 int main(int argc, char* argv[]) {
 
@@ -6,6 +7,7 @@ int main(int argc, char* argv[]) {
 		// No file given
 	}
 	else {
+
 		// Try to load file
 	}
 
