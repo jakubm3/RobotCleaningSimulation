@@ -12,7 +12,7 @@ template <typename T>
 class FileManager
 {
 private:
-    enum FileMode
+    enum class FileMode
     {
         write,
         read,
@@ -20,7 +20,7 @@ private:
     };
     std::ifstream readingFile;
     std::ofstream writingFile;
-    FileMode currMode = none;
+    FileMode currMode = FileMode::none;
 
 public:
     FileManager() = default;

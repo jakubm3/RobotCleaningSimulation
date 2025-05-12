@@ -1,11 +1,12 @@
 #include <iostream>
 #include <filesystem>
 #include "FileManager.hpp"
+#include "Simulation.h"
 
 namespace fs = std::filesystem;
 
 int main(int argc, char* argv[]) {
-	FileManager<std::string> fm;
+	FileManager<Simulation> fm;
 	fs::path filePath;
 	
 	if (argc < 2) {
