@@ -1,23 +1,46 @@
 #include <iostream>
+#include <ostream>
+#include <filesystem>
+#include "FileManager.hpp"
+#include "Simulation.h"
+
+namespace fs = std::filesystem;
 
 int main(int argc, char* argv[]) {
-
-	if (argc < 2) {
-		// No file given
-	}
-	else {
-		// Try to load file
-	}
+	FileManager<Simulation> fm;
+	Simulation simulation;
+	fs::path filePath;
+	bool correctFile = false;
 
 	std::cout << "\nCLEANING ROBOT SIMULATION\n\n\n";
-	// If file not loaded, give path
-	if (true) {
-		std::cout << "Give file path: ";
-		std::string givenPath;
-		std::cin >> givenPath;
+
+	if (argc == 2)
+	{
+		filePath = argv[1];
+		
+		if (fs::exists(filePath) && fm.readingMode(filePath)) {
+			std::stringstream ss;
+			fm.loadFromFile(ss);
+			ss >> simulation;
+			correctFile = simulation.isSimulationValid();
+		}
 	}
 
-	// If file loaded succesfully, start simulation
+	while (!correctFile) {
+		std::cout << "Failed to load file\n";
+		std::cout << "Give file path: ";
+		std::cin >> filePath;
+
+		if (fs::exists(filePath) && fm.readingMode(filePath)) {
+			std::stringstream ss;
+			fm.loadFromFile(ss);
+			ss >> simulation;
+			correctFile = simulation.isSimulationValid();
+		}
+	}
+	
+	simulation.runSimulation(0);
+
 
 	return 0;
 }
