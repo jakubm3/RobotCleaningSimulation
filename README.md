@@ -16,8 +16,8 @@ PPPPPPPPP
 Class design:
 
 Klasy:
-Room:
-	fields: tiles (collection of unique pointers), Robot robot
+Simulation:
+	fields: room (collection of unique pointers to tiles), Robot robot
 	methods:
 		addRubbish(int howDirty=1, int id=null) - sums the howDirty value with current mess level of the tile with given id (random id if not given)
 		operator<< - prints current status of map (it replaces one floor with 'X' on robot position)
@@ -25,7 +25,7 @@ Room:
 		findTileWithId(int id) - returns tile object with id or null
 		getWidth() - returns int (width of room)
 		getHeight() - returns int (height of room)
-		isRoomValid() - returns bool. Room must contain: only 1 charger; obstacle on every edge of room; every floor can be reached from base;
+		isSimulationValid() - returns bool. Room must contain: only 1 charger; obstacle on every edge of room; every floor can be reached from base;
 		runSimulation(int simulationRuns) - spawns robot in charger and calls findTarget on it. Runs until robot says it has finished. Then dependent on simulation mode new trash appears or simulation is over;
 
 Robot:
@@ -39,7 +39,7 @@ Robot:
 		recharge() - refills energy; removes every Tile from ignoredTiles
 		 
 Tile: (asbtract)
-	fields: int id (position in Room's collection)
+	fields: int id (position in Simulations's collection)
 	methods: 
 		virtual operator<< 
 		virtual isMoveValid - returns bool; true if robot can step on it
@@ -72,7 +72,7 @@ FileManager:
 
 
 Team main responsibilities:
-	- Gabryel Jundzill: merging to main and documentation
+	- Gabryel Jundzill: merging and resolving conflicts and documentation
 	- Jakub Mierzejewski: tests
 	- Jakub Adamczyk: tests
 
@@ -80,13 +80,19 @@ Team main responsibilities:
 TASKS:
 Done:
 	- Pre-documentation - Gabryel Jundzill
+	- Make main file with introduction to simulation - Gabryel Jundzill
+	- Create Tile template and its hierarhy (Obstacle, Floor, Charger) - Jakub Mierzejewski
+	- Create Simulation class template - Jakub Adamczyk
+	- Create Robot class template
+	- Create file manager - Gabryel Jundzill
+
 Current:
-	- Make main file with introduction to simulation - Gabryel Jundzill (24 April)
-	- Create Tile and its hierarhy (Obstacle, Floor, Charger) - Jakub Mierzejewski (27 April)
-	- Create Room class - Jakub Adamczyk (27 April)
+	- Main file has interactable interface
+	- Simulation can be loaded from file
+	- Validation of loaded file
+	- Tiles implementation
+	
 Future:
-	- Main file has interactable interface, simulation can be loaded from file
-	- Create Robot class
 	- Simulation can be runned
 
 Milestones:
