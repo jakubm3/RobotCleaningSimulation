@@ -1,3 +1,41 @@
+# Pliki binarne
+[Bb]in/
+[Oo]bj/
+
+# Pliki kompilatora (intermediate, build, debug)
+*.obj
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ipdb
+*.iobj
+*.ilk
+
+# Pliki Visual Studio
 .vs/
-Robot/Robot/x64/
-Robot/x64/
+.vscode/
+*.user
+*.suo
+*.sdf
+*.cache
+*.VC.db
+*.VC.VC.opendb
+
+# Pliki logów, tymczasowe, backupy
+*.log
+*.tmp
+*.bak
+*.ncb
+*.aps
+*.pch
+
+# Pliki systemowe
+Thumbs.db
+Desktop.ini
+
+# NuGet, MSBuild
+packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
