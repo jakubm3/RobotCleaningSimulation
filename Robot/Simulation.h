@@ -14,10 +14,11 @@ private:
     Robot robot;
     int width;
     int height;
+    int chargerId;
 
 public:
     // Constructor
-    Simulation() : width(0), height(0) {}
+    Simulation() : width(0), height(0), chargerId(-1) {}
 
     // Add rubbish to the simulation
     void addRubbish(int howDirty = 1, int id = -1);
