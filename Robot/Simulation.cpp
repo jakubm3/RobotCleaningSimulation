@@ -107,7 +107,7 @@ void Simulation::changeRobotsPosition(size_t newPositionId) {
         // After changing position, the robot should update its memory about the new tile
         const Tile* currentTile = map.getTile(newPositionId); // Get the tile from the main map
         if (currentTile) {
-            updateRobotMemory(newPositionId, *currentTile); // Update robot's internal memory
+            updateRobotMemory(newPositionId, currentTile); // Update robot's internal memory
         }
         else {
             // This case should ideally not happen if setPosition was successful and map.getTile is robust
@@ -211,7 +211,7 @@ void Simulation::runSimulation(unsigned int steps) {
         // This is crucial for the robot to build its internal map.
         const Tile* currentTile = map.getTile(robot.getPosition());
         if (currentTile) {
-            updateRobotMemory(robot.getPosition(), *currentTile);
+            updateRobotMemory(robot.getPosition(), currentTile);
         }
         else {
             std::cerr << "Error: Robot at invalid position " << robot.getPosition() << " or tile not found on main map.\n";
@@ -254,7 +254,7 @@ void Simulation::printSimulation() {
 }
 
 // Updates the robot's internal memory (its own map) based on a sensed tile.
-void Simulation::updateRobotMemory(size_t tileId, const Tile& tileObj) {
+void Simulation::updateRobotMemory(size_t tileId, const Tile* tileObj) {
     // This function acts as the bridge between the actual map and robot's memory.
     robot.exploreTile(tileId, tileObj); // Robot adds/updates its internal map knowledge
     std::cout << "Internal: Robot's memory updated for Tile ID " << tileId << ".\n";

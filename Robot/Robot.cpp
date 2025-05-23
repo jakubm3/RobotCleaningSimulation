@@ -267,7 +267,7 @@ std::tuple<RobotAction, Direction> Robot::makeAction() {
 	return std::make_tuple(RobotAction::move, direction);
 }
 
-void Robot::exploreTile(size_t tileId, const Tile& tileObj) {
+void Robot::exploreTile(size_t tileId, const Tile* tileObj) {
 	map.updateTile(tileId, tileObj);
 }
 
@@ -306,7 +306,9 @@ bool Robot::resetMemory() {
 	}
 
 	map = Map(map.getWidth(), map.getHeight(), map.getChargerId());
-	map.updateTile(map.getChargerId(), Charger());
+	Charger* charger = new Charger();
+	map.updateTile(map.getChargerId(), charger);
+	delete charger;
 	return true;
 }
 

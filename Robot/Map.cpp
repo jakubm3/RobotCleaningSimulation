@@ -130,19 +130,19 @@ void Map::loadMap(std::istream& in) {
     }
 }
 
-void Map::updateTile(size_t tileId, const Tile& tileObj) {
+void Map::updateTile(size_t tileId, const Tile* tileObj) {
     if (tileId >= tiles.size()) {
         throw std::out_of_range("Tile ID out of range");
     }
 
     // If current tile is UnVisited, replace with copy
     if (dynamic_cast<const UnVisited*>(tiles[tileId].get())) {
-        tiles[tileId] = tileObj.clone();
+        tiles[tileId] = tileObj->clone();
         tiles[tileId]->setId(tileId);
     }
     // If both are Floor tiles, copy cleanliness
     else if (const Floor* currentFloor = dynamic_cast<const Floor*>(tiles[tileId].get())) {
-        if (const Floor* newFloor = dynamic_cast<const Floor*>(&tileObj)) {
+        if (const Floor* newFloor = dynamic_cast<const Floor*>(tileObj)) {
             const_cast<Floor*>(currentFloor)->setCleanliness(newFloor->getCleanliness());
         }
     }
@@ -194,21 +194,16 @@ const Tile* Map::getTile(size_t index) const {
     return nullptr;
 }
 
-std::optional<size_t> Map::getIndex(size_t position, Direction direction) {
-    // TODO
-	return 0;
-}
-
-std::ostream& operator<<(std::ostream& os, const Map& map) {
-    if (map.tiles.empty()) {
+void Map::saveMap(std::ostream& os) const {
+    if (tiles.empty()) {
         os << "Map is empty.";
-        return os;
+        return;
     }
 
-    for (size_t i = 0; i < map.height; ++i) {
-        for (size_t j = 0; j < map.width; ++j) {
-            size_t index = i * map.width + j;
-            const Tile* tile = map.tiles[index].get();
+    for (size_t i = 0; i < height; ++i) {
+        for (size_t j = 0; j < width; ++j) {
+            size_t index = i * width + j;
+            const Tile* tile = tiles[index].get();
 
             if (const Floor* floor = dynamic_cast<const Floor*>(tile)) {
                 os << static_cast<char>('0' + floor->getCleanliness());
@@ -228,6 +223,38 @@ std::ostream& operator<<(std::ostream& os, const Map& map) {
         }
         os << '\n';
     }
+}
 
+std::optional<size_t> Map::getIndex(size_t position, Direction direction) {
+    if (position >= tiles.size()) return std::nullopt;
+
+    size_t x = position % width;
+    size_t y = position / width;
+
+    switch (direction) {
+    case Direction::up:
+        if (y == 0) return std::nullopt;
+        y--;
+        break;
+    case Direction::down:
+        if (y + 1 >= height) return std::nullopt;
+        y++;
+        break;
+    case Direction::left:
+        if (x == 0) return std::nullopt;
+        x--;
+        break;
+    case Direction::right:
+        if (x + 1 >= width) return std::nullopt;
+        x++;
+        break;
+    }
+
+    size_t newIndex = y * width + x;
+    return newIndex;
+}
+
+std::ostream& operator<<(std::ostream& os, const Map& map) {
+    map.saveMap(os);
     return os;
 }

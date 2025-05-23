@@ -34,7 +34,7 @@ private:
     void printSimulation();
 
     // Robots interaction
-    void updateRobotMemory(size_t tileId, const Tile& tileObj);
+    void updateRobotMemory(size_t tileId, const Tile* tileObj);
     void cleanTile(size_t tileId, unsigned int efficiency);
 
 public:

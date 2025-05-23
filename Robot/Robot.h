@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <queue>
+#include <utility>
 #include <stack>
 #include <tuple>
 #include "Map.h"
@@ -40,7 +41,7 @@ public:
 	RobotAction getCurrTask() const noexcept { return currTask; }
 
 	std::tuple<RobotAction, Direction> makeAction();
-	void exploreTile(size_t tileId, const Tile& tileObj);
+	void exploreTile(size_t tileId, const Tile* tileObj);
 
 	void orderToGoHome();
 	bool orderToMove(size_t id);
