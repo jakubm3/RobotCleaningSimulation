@@ -3,6 +3,7 @@
 #include <queue>
 #include <tuple>
 #include "Map.h"
+#include "Tile.h"
 
 enum class RobotAction {
 	move,
@@ -44,6 +45,7 @@ public:
 	RobotAction getCurrTask() const noexcept { return currTask; }
 
 	std::tuple<RobotAction, Direction> makeAction();
+	void exploreTile(size_t tileId, Tile& tileObj);
 
 	void orderToGoHome();
 	bool orderToMove(size_t id);

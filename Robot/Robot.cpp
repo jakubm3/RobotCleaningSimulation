@@ -1,5 +1,30 @@
 #include "Robot.h"
 
+Direction Robot::move() {
+	// TODO
+	return Direction::none;
+}
+
+void Robot::cleanTile() {
+	// TODO
+	// Check how dirty is tile, set efficiency
+	// Drains energy = cleaningEfficiency
+}
+
+bool Robot::createPath(size_t targetId) {
+	// TODO
+}
+
+bool Robot::findUnvisited(size_t& targetId) const {
+	// TODO
+	return true;
+}
+
+bool Robot::findTrash(size_t& targetId) const {
+	// TODO
+	return true;
+}
+
 Robot::Robot(size_t mapWidth, size_t mapHeight, size_t chargerId) {
 	tilesToCheck.assign(mapWidth * mapHeight, false);
 	// TODO
@@ -76,46 +101,38 @@ std::tuple<RobotAction, Direction> Robot::makeAction() {
 	return std::make_tuple(RobotAction::move, move());
 }
 
-Direction Robot::move() {
+void Robot::exploreTile(size_t tileId, Tile& tileObj) {
 	// TODO
-	return Direction::none;
-}
-
-void Robot::cleanTile() {
-	// TODO
-	// Check how dirty is tile, set efficiency
-	// Drains energy = cleaningEfficiency
-}
-
-bool Robot::createPath(size_t targetId) {
-	// TODO
-}
-
-bool Robot::findUnvisited(size_t& targetId) const {
-	// TODO
-	return true;
-}
-
-bool Robot::findTrash(size_t& targetId) const {
-	// TODO
-	return true;
 }
 
 void Robot::orderToGoHome() {
-
+	while (!path.empty()) {
+		path.pop();
+	}
+	currTask = RobotAction::move;
+	createPath(chargerId_);
 }
 
 bool Robot::orderToMove(size_t id) {
+	if (currTask == RobotAction::explore) { 
+		return false; 
+	}
 	// TODO
 	return true;
 }
 
 bool Robot::orderToClean(size_t id, unsigned int radius) {
+	if (currTask == RobotAction::explore) {
+		return false;
+	}
 	// TODO
 	return true;
 }
 
 bool Robot::resetMemory() {
+	if (position_ != chargerId_) { 
+		return false; 
+	}
 	// TODO
 	return true;
 }
