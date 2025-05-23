@@ -136,6 +136,7 @@
     <ClCompile Include="Robot.cpp" />
     <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="UnVisited.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Charger.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="Robot.h" />
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="UnVisited.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileManager.hpp" />

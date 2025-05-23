@@ -13,6 +13,7 @@ void Robot::cleanTile() {
 
 bool Robot::createPath(size_t targetId) {
 	// TODO
+	return true;
 }
 
 bool Robot::findUnvisited(size_t& targetId) const {
