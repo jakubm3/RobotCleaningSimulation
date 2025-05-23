@@ -26,6 +26,10 @@ void Map::updateTile(size_t tileId, const Tile& tileObj) {
 	// TODO: if tile is unvisited, replace with copy. If tile is floor, copy cleanliness
 }
 
+std::optional<size_t> Map::getIndex(size_t position, Direction direction) {
+	return 0;
+}
+
 std::ostream& operator<<(std::ostream& os, const Map& map) {
 	os << "Here will be map\n";
 	return os;
