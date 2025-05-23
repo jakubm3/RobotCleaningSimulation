@@ -184,6 +184,7 @@ void Simulation::loadSimulation(fs::path filePath) {
 }
 
 // Runs the simulation for a specified number of steps, allowing the robot to perform actions.
+// Runs the simulation for a specified number of steps, allowing the robot to perform actions.
 void Simulation::runSimulation(unsigned int steps) {
     if (steps == 0) {
         std::cout << "No steps to run.\n";
@@ -194,7 +195,37 @@ void Simulation::runSimulation(unsigned int steps) {
     for (unsigned int i = 0; i < steps; ++i) {
         std::cout << "\n--- Step " << (i + 1) << " ---\n";
 
-        // 1. Robot performs an action (move, clean, explore)
+        // --- NEW: Robot explores current tile and its neighbors BEFORE making an action ---
+        size_t currentRobotPos = robot.getPosition();
+
+        // 1. Explore the current tile
+        const Tile* currentTile = map.getTile(currentRobotPos);
+        if (currentTile) {
+            updateRobotMemory(currentRobotPos, currentTile);
+        }
+        else {
+            std::cerr << "Error: Robot at invalid position " << currentRobotPos << " or tile not found on main map. Stopping simulation.\n";
+            break; // Critical error, stop simulation
+        }
+
+        // 2. Explore immediate neighbors of the current tile
+        // Use Map::getIndex to safely get neighbor IDs
+        Direction directions[] = { Direction::up, Direction::down, Direction::left, Direction::right };
+
+        for (Direction dir : directions) {
+            std::optional<size_t> neighborIdOpt = map.getIndex(currentRobotPos, dir);
+            if (neighborIdOpt.has_value()) {
+                size_t neighborId = neighborIdOpt.value();
+                const Tile* neighborTile = map.getTile(neighborId);
+                if (neighborTile) {
+                    updateRobotMemory(neighborId, neighborTile);
+                }
+            }
+        }
+        std::cout << "Robot completed sensing and updating memory for current tile and its neighbors.\n";
+        // --- END NEW EXPLORATION LOGIC ---
+
+        // 3. Robot performs an action (move, clean, explore) based on its updated internal map
         std::tuple<RobotAction, Direction> actionResult = robot.makeAction();
         RobotAction action = std::get<0>(actionResult);
 
@@ -207,21 +238,12 @@ void Simulation::runSimulation(unsigned int steps) {
         }
         std::cout << ".\n";
 
-        // 2. Update robot's memory with info about its current tile (if explore or moved to new tile)
-        // This is crucial for the robot to build its internal map.
-        const Tile* currentTile = map.getTile(robot.getPosition());
-        if (currentTile) {
-            updateRobotMemory(robot.getPosition(), currentTile);
-        }
-        else {
-            std::cerr << "Error: Robot at invalid position " << robot.getPosition() << " or tile not found on main map.\n";
-            // Consider breaking or handling this critical error
-            break;
-        }
-
-        // 3. If robot cleaned, update the actual main map
+        // 4. If robot cleaned, update the actual main map
+        // Note: The 'clean' action typically happens on the robot's *current* position.
+        // If the robot moves, and then cleans, this logic might need refinement based on
+        // when the robot *decides* to clean vs. when the cleaning *takes effect*.
+        // For now, assuming RobotAction::clean implies cleaning at its post-action position.
         if (action == RobotAction::clean) {
-            // Assuming the robot cleans its current tile when RobotAction::clean is returned
             cleanTile(robot.getPosition(), robot.getCleaningEfficiency());
         }
 
@@ -420,7 +442,7 @@ void Simulation::loadFromFile(fs::path filePath) {
 
     while (std::getline(inputFile, line)) {
         if (readingMap) {
-            if (line.empty()) {
+            if (line.empty()) { // An empty line signals the end of map data and start of robot data
                 readingMap = false;
             }
             else {
@@ -439,13 +461,35 @@ void Simulation::loadFromFile(fs::path filePath) {
     }
     catch (const std::exception& e) {
         std::cerr << "Error loading map data: " << e.what() << std::endl;
+        // If map loading fails, we cannot safely initialize the robot with map dimensions.
+        // It's best to stop here or throw an exception.
+        std::cerr << "Map loading failed. Cannot proceed with robot initialization. Returning.\n";
+        return;
     }
 
-    try {
-        robot.loadRobot(robotDataStream);
-        std::cout << "Robot data loaded successfully." << std::endl;
+    // --- NEW LOGIC FOR ROBOT INITIALIZATION ---
+    // Check if the robotDataStream is empty (i.e., no robot data was found in the file)
+    if (robotDataStream.str().empty()) {
+        std::cout << "Robot data not found in file. Initializing robot with map dimensions and charger ID.\n";
+        // Initialize/re-create the robot using the dimensions and charger ID from the loaded map.
+        // This assumes map.getWidth(), map.getHeight(), map.getChargerId() are accessible after map.loadMap().
+        robot = Robot(map.getWidth(), map.getHeight(), map.getChargerId());
+
+        std::cout << "Robot initialized with: Width=" << map.getWidth()
+            << ", Height=" << map.getHeight()
+            << ", ChargerID=" << map.getChargerId() << ".\n";
     }
-    catch (const std::exception& e) {
-        std::cerr << "Error loading robot data: " << e.what() << std::endl;
+    else {
+        // If robot data exists in the stream, proceed to load it
+        try {
+            robot.loadRobot(robotDataStream);
+            std::cout << "Robot data loaded successfully." << std::endl;
+        }
+        catch (const std::exception& e) {
+            std::cerr << "Error loading robot data: " << e.what() << std::endl;
+            // Fallback: If robot loading fails, re-initialize it with map defaults.
+            std::cerr << "Robot loading failed. Re-initializing robot with map dimensions and charger ID as a fallback.\n";
+            robot = Robot(map.getWidth(), map.getHeight(), map.getChargerId());
+        }
     }
 }
