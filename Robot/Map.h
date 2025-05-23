@@ -31,6 +31,7 @@ public:
 	size_t getWidth() const noexcept { return width; }
 	size_t getHeight() const noexcept { return height; }
 	size_t getChargerId() const noexcept { return chargerId; }
+	size_t getSize() const { return width * height; }
 
 	//TODO rule of five
 
@@ -38,6 +39,7 @@ public:
 	bool canMoveOn(size_t tileId) const;
 	void loadMap(std::istream& in);
 	void updateTile(size_t tileId, const Tile& tileObj);
+	Tile* getTile(size_t index);
 	std::optional<size_t> getIndex(size_t position, Direction direction);
 
 	friend std::ostream& operator<<(std::ostream& os, const Map& map);
