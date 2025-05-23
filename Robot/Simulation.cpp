@@ -44,7 +44,7 @@ void Simulation::printSimulation() {
     // TODO: print progress of simulation
 }
 
-void Simulation::updateRobotMemory(size_t tileId, Tile& tileObj) {
+void Simulation::updateRobotMemory(size_t tileId, const Tile& tileObj) {
     // TODO: update memory
 }
 void Simulation::cleanTile(size_t tileId, unsigned int efficiency) {
@@ -55,10 +55,10 @@ void Simulation::start(fs::path filePath) {
     // TODO: try to load and start interface
 }
 
-Tile* Simulation::findTileWithId(size_t id) const {
-    // TODO: Implement finding tile by ID
-    return nullptr;
-}
+//Tile* Simulation::findTileWithId(size_t id) const {
+//    // TODO: Implement finding tile by ID
+//    return nullptr;
+//}
 
 void Simulation::loadFromFile(fs::path filePath) {
     // TODO: load from file

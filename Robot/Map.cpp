@@ -1,5 +1,33 @@
 #include "Map.h"
 
+Map::Map(std::istream& in) {
+	// TODO: load map
+}
+
+Map::Map(size_t mapWidth, size_t mapHeight, size_t chargerTileId) {
+	// TODO: fill with unvisited tiles with such sizes
+	chargerId = chargerTileId;
+}
+
+bool Map::isMapValid() const {
+	// TODO: map must have mapWidth*mapHeight tiles and exactly one charger
+	return true;
+}
+bool Map::canMoveOn(size_t tileId) const {
+	// TODO: if can step on
+	return true;
+}
+void Map::loadMap(std::istream& in) {
+	// TODO: load map
+}
+void Map::updateTile(size_t tileId, const Tile& tileObj) {
+	// TODO: if tile is unvisited, replace with copy. If tile is floor, copy cleanliness
+}
+
+std::ostream& operator<<(std::ostream& os, const Map& map) {
+	os << "Here will be map\n";
+	return os;
+}
 
 // LOGIC FROM SIMULATION, NEEDS CHANGING
 //std::ostream& operator<<(std::ostream& os, const Simulation& simulation) {

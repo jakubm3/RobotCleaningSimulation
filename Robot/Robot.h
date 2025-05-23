@@ -35,6 +35,7 @@ private:
 	bool findTrash(size_t& targetId) const;
 public:
 	Robot() = delete;
+	Robot(std::istream& in);
 	Robot(size_t mapWidth, size_t mapHeight, size_t chargerId);
 	bool setPosition(size_t newPosition);
 	size_t getPosition() const noexcept { return position_; }
@@ -44,13 +45,15 @@ public:
 	RobotAction getCurrTask() const noexcept { return currTask; }
 
 	std::tuple<RobotAction, Direction> makeAction();
-	void exploreTile(size_t tileId, Tile& tileObj);
+	void exploreTile(size_t tileId, const Tile& tileObj);
 
 	void orderToGoHome();
 	bool orderToMove(size_t id);
 	bool orderToClean(size_t id, unsigned int radius);
 	bool resetMemory();
-	
+
 	void loadRobot(std::istream& in);
 	void saveRobot(std::ostream& out) const;
+
+	friend std::ostream& operator<<(std::ostream& os, const Robot& robot);
 };

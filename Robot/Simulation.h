@@ -33,7 +33,7 @@ private:
     void printSimulation();
 
     // Robots interaction
-    void updateRobotMemory(size_t tileId, Tile& tileObj);
+    void updateRobotMemory(size_t tileId, const Tile& tileObj);
     void cleanTile(size_t tileId, unsigned int efficiency);
 
 public:
@@ -43,8 +43,8 @@ public:
     // Opens interface
     void start(fs::path filePath);
 
-    // Find tile with specific ID
-    Tile* findTileWithId(size_t id) const;
+    // Find tile with specific ID           chyba niepotrzebne?
+    //Tile* findTileWithId(size_t id) const;
 
     void loadFromFile(fs::path filePath);
 };

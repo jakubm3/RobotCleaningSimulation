@@ -26,6 +26,10 @@ bool Robot::findTrash(size_t& targetId) const {
 	return true;
 }
 
+Robot::Robot(std::istream& in) {
+	loadRobot(in);
+}
+
 Robot::Robot(size_t mapWidth, size_t mapHeight, size_t chargerId) {
 	tilesToCheck.assign(mapWidth * mapHeight, false);
 	// TODO
@@ -102,7 +106,7 @@ std::tuple<RobotAction, Direction> Robot::makeAction() {
 	return std::make_tuple(RobotAction::move, move());
 }
 
-void Robot::exploreTile(size_t tileId, Tile& tileObj) {
+void Robot::exploreTile(size_t tileId, const Tile& tileObj) {
 	// TODO
 }
 
@@ -143,4 +147,9 @@ void Robot::loadRobot(std::istream& in) {
 }
 void Robot::saveRobot(std::ostream& out) const {
 	// TODO
+}
+
+std::ostream& operator<<(std::ostream& os, const Robot& robot) {
+	os << "Nothing yet XD\n";
+	return os;
 }
