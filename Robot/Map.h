@@ -1,11 +1,20 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <optional>
 #include "Tile.h"
 #include "Obstacle.h"
 #include "Charger.h"
 #include "Floor.h"
 #include "UnVisited.h"
+
+enum class Direction {
+	up,
+	down,
+	left,
+	right,
+	none
+};
 
 class Map {
 private:
@@ -29,6 +38,7 @@ public:
 	bool canMoveOn(size_t tileId) const;
 	void loadMap(std::istream& in);
 	void updateTile(size_t tileId, const Tile& tileObj);
+	std::optional<size_t> getIndex(size_t position, Direction direction);
 
 	friend std::ostream& operator<<(std::ostream& os, const Map& map);
 };

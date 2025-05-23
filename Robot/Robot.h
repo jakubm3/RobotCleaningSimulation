@@ -10,13 +10,6 @@ enum class RobotAction {
 	explore
 };
 
-enum class Direction {
-	up,
-	down,
-	left,
-	right,
-	none
-};
 
 class Robot {
 private:
