@@ -151,6 +151,9 @@
   <ItemGroup>
     <ClInclude Include="FileManager.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="exampleSave.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

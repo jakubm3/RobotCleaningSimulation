@@ -74,4 +74,7 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="exampleSave.txt" />
+  </ItemGroup>
 </Project>

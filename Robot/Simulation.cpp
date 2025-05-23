@@ -63,11 +63,6 @@ fs::path getFilePathInput(const std::string& prompt) {
     return fs::path(pathStr);
 }
 
-bool Simulation::isSimulationValid() const {
-    std::cout << "Validation check (not fully implemented).\n";
-    return true; // Assume valid for now to proceed
-}
-
 void Simulation::addRubbish(size_t tileId, unsigned int dirtiness) {
     std::cout << "Action: Adding " << dirtiness << " rubbish to Tile ID " << tileId << ".\n";
     // TODO: Implement logic here to modify map tile's dirtiness
