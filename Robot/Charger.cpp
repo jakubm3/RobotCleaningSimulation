@@ -2,10 +2,11 @@
 
 Charger::Charger(size_t id) : Tile(id) {}
 
-bool Charger::isMoveValid() const {
-    return true; // Robot może wejść na ładowarkę
+std::unique_ptr<Tile> Charger::clone() const {
+    return std::make_unique<Charger>(*this);
 }
 
-//void Charger::print(std::ostream& os) const {
-//    os << 'B'; // Wypisuje 'B' jako bazę (ładowarkę)
-//}
+bool Charger::isMoveValid() const {
+    return true; // robot może wejść na ładowarkę
+}
+
