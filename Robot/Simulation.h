@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <sstream>
 #include "Robot.h"
 #include "Map.h"
 #include "FileManager.hpp"
@@ -19,16 +20,16 @@ private:
     bool isSimulationValid() const;
 
     // Simulation options
-    void addRubbish();
-    void changeRobotsPosition();
-    void orderRobotToGoHome();
-    void orderRobotToMove();
-    void orderRobotToClean();
-    void resetRobotMemory();
-    void saveSimulation();
-    void loadSimulation();
-    void runSimulation();
-    void exitSimulation();
+    void addRubbish(size_t tileId, unsigned int dirtiness);
+    void changeRobotsPosition(size_t newPositionId); // Assuming robot moves to a tile ID
+    void orderRobotToGoHome(); // No parameters needed
+    void orderRobotToMove(size_t targetTileId); // Robot moves to specific tile
+    void orderRobotToClean(size_t tileId, unsigned int radius); // Robot cleans a specific tile with radius
+    void resetRobotMemory(); // No parameters needed
+    void saveSimulation(fs::path filePath); // Save to a specific file
+    void loadSimulation(fs::path filePath); // Load from a specific file
+    void runSimulation(unsigned int steps); // Run for N steps
+    void exitSimulation(); // No parameters needed
 
     void printSimulation();
 
