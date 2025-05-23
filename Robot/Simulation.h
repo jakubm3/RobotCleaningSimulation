@@ -1,46 +1,52 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include <memory>
-#include <vector>
 #include <iostream>
 #include <fstream>
-#include "Tile.h"
+#include <filesystem>
 #include "Robot.h"
+#include "Map.h"
+#include "FileManager.hpp"
+
+namespace fs = std::filesystem;
 
 class Simulation {
 private:
-    std::vector<std::unique_ptr<Tile>> tiles;
-    Robot robot;
-    int width;
-    int height;
-    int chargerId;
-
-public:
-    // Constructor
-    Simulation() : width(0), height(0), chargerId(-1) {}
-
-    // Add rubbish to the simulation
-    void addRubbish(int howDirty = 1, int id = -1);
-
-    // Find tile with specific ID
-    Tile* findTileWithId(int id);
-
-    // Getters
-    int getWidth() const { return width; }
-    int getHeight() const { return height; }
+    Map map;
+    Robot robot = Robot(0, 0, 0);
 
     // Check if simulation setup is valid
     bool isSimulationValid() const;
 
-    // Run the simulation
-    void runSimulation(int simulationRuns);
+    // Simulation options
+    void addRubbish();
+    void changeRobotsPosition();
+    void orderRobotToGoHome();
+    void orderRobotToMove();
+    void orderRobotToClean();
+    void resetRobotMemory();
+    void saveSimulation();
+    void loadSimulation();
+    void runSimulation();
+    void exitSimulation();
 
-    // Output operator
-    friend std::ostream& operator<<(std::ostream& os, const Simulation& simulation);
+    void printSimulation();
 
-    // Input operator
-    friend std::istream& operator>>(std::istream& is, Simulation& simulation);
+    // Robots interaction
+    void updateRobotMemory(size_t tileId, Tile& tileObj);
+    void cleanTile(size_t tileId, unsigned int efficiency);
+
+public:
+    // Constructor
+    Simulation() = default;
+
+    // Opens interface
+    void start(fs::path filePath);
+
+    // Find tile with specific ID
+    Tile* findTileWithId(size_t id) const;
+
+    void loadFromFile(fs::path filePath);
 };
 
 #endif // SIMULATION_H

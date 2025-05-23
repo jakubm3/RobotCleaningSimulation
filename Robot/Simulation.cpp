@@ -1,106 +1,65 @@
 #include "Simulation.h"
-#include "Obstacle.h"
-#include "Floor.h"
-#include "Charger.h"
 #include <string>
-
-void Simulation::addRubbish(int howDirty, int id) {
-    // TODO: Implement adding rubbish
-}
-
-Tile* Simulation::findTileWithId(int id) {
-    // TODO: Implement finding tile by ID
-    return nullptr;
-}
 
 bool Simulation::isSimulationValid() const {
     // TODO: Implement validation check
     return false;
 }
 
-void Simulation::runSimulation(int simulationRuns) {
-    // TODO: Implement simulation runs
-}
-
-std::ostream& operator<<(std::ostream& os, const Simulation& simulation) {
-    if (simulation.tiles.empty()) {
-        os << "Simulation is empty.";
-        return os;
-    }
-
-    for (int i = 0; i < simulation.height; ++i) {
-        for (int j = 0; j < simulation.width; ++j) {
-            int index = i * simulation.width + j;
-            const Tile* tile = simulation.tiles[index].get();
-
-            if (const Floor* floor = dynamic_cast<const Floor*>(tile)) {
-                os << static_cast<char>('0' + floor->getCleanliness());
-            }
-            else if (dynamic_cast<const Obstacle*>(tile)) {
-                os << 'P';
-            }
-            else if (dynamic_cast<const Charger*>(tile)) {
-                os << 'B';
-            }
-            else {
-                os << '?';
-            }
-        }
-        os << '\n';
-    }
-
-    return os;
+void Simulation::addRubbish() {
+    // unsigned int howDirty = 1, size_t id = static_cast<size_t>(-1)
+    // TODO: Implement adding rubbish
 }
 
 
-std::istream& operator>>(std::istream& is, Simulation& simulation) {
-    simulation.tiles.clear();
-    simulation.width = 0;
-    simulation.height = 0;
-    simulation.chargerId = -1;
+void Simulation::changeRobotsPosition() {
+    // TODO: set new robot position
+}
+void Simulation::orderRobotToGoHome() {
+    // TODO: just call function XD
+}
+void Simulation::orderRobotToMove() {
+    // TODO: order to move at
+}
+void Simulation::orderRobotToClean() {
+    // TODO: order to clean at
+}
+void Simulation::resetRobotMemory() {
+    // TODO: order to reset memory
+}
+void Simulation::saveSimulation() {
+    // TODO: save to file
+}
+void Simulation::loadSimulation() {
+    // TODO: load from file
+}
+void Simulation::runSimulation() {
+    // TODO: run X steps, every time before step update tiles around in memory
+}
+void Simulation::exitSimulation() {
+    // TODO: exit
+}
 
-    std::vector<std::string> lines;
-    std::string line;
-    while (std::getline(is, line)) {
-        if (!line.empty()) {
-            lines.push_back(line);
-        }
-    }
+void Simulation::printSimulation() {
+    // TODO: print progress of simulation
+}
 
-    if (lines.empty()) {
-        throw std::runtime_error("Map file is empty.");
-    }
+void Simulation::updateRobotMemory(size_t tileId, Tile& tileObj) {
+    // TODO: update memory
+}
+void Simulation::cleanTile(size_t tileId, unsigned int efficiency) {
+    // TODO: clean tile
+}
 
-    simulation.height = lines.size();
-    simulation.width = lines[0].length();
+void Simulation::start(fs::path filePath) {
+    // TODO: try to load and start interface
+}
 
-    int idCounter = 0;
-    for (size_t i = 0; i < simulation.height; ++i) {
-        if (lines[i].length() != simulation.width) {
-            throw std::runtime_error("Map is not rectangular.");
-        }
-        for (size_t j = 0; j < simulation.width; ++j) {
-            char tileChar = lines[i][j];
-            if (isdigit(tileChar)) {
-                simulation.tiles.push_back(std::make_unique<Floor>(idCounter, tileChar - '0'));
-            }
-            else if (tileChar == 'P') {
-                simulation.tiles.push_back(std::make_unique<Obstacle>(idCounter));
-            }
-            else if (tileChar == 'B') {
-                simulation.tiles.push_back(std::make_unique<Charger>(idCounter));
-                simulation.chargerId = idCounter;
-            }
-            else {
-                throw std::runtime_error("Invalid character in map file: " + std::string(1, tileChar));
-            }
-            idCounter++;
-        }
-    }
+Tile* Simulation::findTileWithId(size_t id) const {
+    // TODO: Implement finding tile by ID
+    return nullptr;
+}
 
-    if (simulation.chargerId == -1) {
-        throw std::runtime_error("Map must contain exactly one charger.");
-    }
-
-    return is;
+void Simulation::loadFromFile(fs::path filePath) {
+    // TODO: load from file
 }
