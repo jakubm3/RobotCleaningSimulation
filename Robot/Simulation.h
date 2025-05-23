@@ -19,6 +19,8 @@ private:
     bool isSimulationValid() const;
 
     // Simulation options
+    void clearScreen();
+    void pressEnterToContinue();
     void addRubbish();
     void changeRobotsPosition();
     void orderRobotToGoHome();
