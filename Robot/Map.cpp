@@ -118,6 +118,9 @@ void Map::loadMap(std::istream& in) {
                 }
                 chargerId = idCounter;
             }
+            else if (tileChar == '?') {
+                tiles.push_back(std::make_unique<UnVisited>(idCounter));
+            }
             else {
                 throw std::runtime_error("Invalid character in map file: " + std::string(1, tileChar));
             }

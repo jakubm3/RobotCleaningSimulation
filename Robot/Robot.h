@@ -4,6 +4,8 @@
 #include <utility>
 #include <stack>
 #include <tuple>
+#include <string>
+#include <sstream>
 #include "Map.h"
 
 enum class RobotAction {

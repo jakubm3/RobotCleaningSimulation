@@ -210,6 +210,7 @@ bool Robot::isRobotValid() const {
 	if (currTask == RobotAction::error) {
 		return false;
 	}
+	return true;
 }
 
 void Robot::setEfficiency(unsigned int efficiency) {
@@ -320,7 +321,26 @@ bool Robot::resetMemory() {
 }
 
 void Robot::loadRobot(std::istream& in) {
-	map.loadMap(in);
+	std::stringstream mapStream;
+	std::string line;
+
+	while (std::getline(in, line)) {
+		bool isEmptyRow = true;
+		for (char c : line) {
+			if (c != '0' && c != ' ' && c != '\t') {
+				isEmptyRow = false;
+				break;
+			}
+		}
+
+		if (isEmptyRow) {
+			break;
+		}
+
+		mapStream << line << "\n";
+	}
+
+	map.loadMap(mapStream);
 
 	in >> position_ >> chargerId_;
 	int currTaskInt;
@@ -349,6 +369,7 @@ void Robot::loadRobot(std::istream& in) {
 
 void Robot::saveRobot(std::ostream& out) const {
 	map.saveMap(out);
+	out << "\n";
 	out << position_ << ' ' << chargerId_ << ' ';
 	out << static_cast<int>(currTask) << ' ';
 	out << cleaningEfficiency << ' ';
