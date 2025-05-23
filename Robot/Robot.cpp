@@ -1,6 +1,7 @@
 #include "Robot.h"
 
-Robot::Robot(size_t mapWidth, size_t mapHeight, size_t chargerId) noexcept {
+Robot::Robot(size_t mapWidth, size_t mapHeight, size_t chargerId) {
+	tilesToCheck.assign(mapWidth * mapHeight, false);
 	// TODO
 	// Load width x height map of unvisited tiles
 	// Explore chargerId
@@ -9,10 +10,21 @@ Robot::Robot(size_t mapWidth, size_t mapHeight, size_t chargerId) noexcept {
 	currTask = RobotAction::explore;
 }
 
-void Robot::cleanTile() noexcept {
+bool Robot::setPosition(size_t newPosition) {
+	// Only if not in exploring mode
+	if (currTask == RobotAction::explore) {
+		return false;
+	}
+	// Clears path
+	while (!path.empty()) {
+		path.pop();
+	}
+
 	// TODO
-	// Check how dirty is tile, set efficiency
-	// Drains energy = cleaningEfficiency
+	// If placed on unvisited or invalid tile, exception
+	position_ = newPosition;
+	// Explore curr tile
+	return true;
 }
 
 std::tuple<RobotAction, Direction> Robot::makeAction() {
@@ -21,7 +33,7 @@ std::tuple<RobotAction, Direction> Robot::makeAction() {
 	if (cleaningEfficiency > 0) {
 		return std::make_tuple(RobotAction::clean, Direction::none);
 	}
-	
+
 	// If has move target and in cleaning mode
 	if (!path.empty() && currTask == RobotAction::clean) {
 		// TODO
@@ -69,6 +81,12 @@ Direction Robot::move() {
 	return Direction::none;
 }
 
+void Robot::cleanTile() {
+	// TODO
+	// Check how dirty is tile, set efficiency
+	// Drains energy = cleaningEfficiency
+}
+
 void Robot::createPath(size_t targetId) {
 	// TODO
 }
@@ -79,6 +97,25 @@ bool Robot::findUnvisited(size_t& targetId) const {
 }
 
 bool Robot::findTrash(size_t& targetId) const {
+	// TODO
+	return true;
+}
+
+void Robot::orderToGoHome() {
+
+}
+
+bool Robot::orderToMove(size_t id) {
+	// TODO
+	return true;
+}
+
+bool Robot::orderToClean(size_t id, unsigned int radius) {
+	// TODO
+	return true;
+}
+
+bool Robot::resetMemory() {
 	// TODO
 	return true;
 }
