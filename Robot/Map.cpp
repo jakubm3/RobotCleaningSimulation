@@ -194,6 +194,10 @@ const Tile* Map::getTile(size_t index) const {
     return nullptr;
 }
 
+std::optional<size_t> Map::getIndex(size_t position, Direction direction) {
+	return 0;
+}
+
 std::ostream& operator<<(std::ostream& os, const Map& map) {
     if (map.tiles.empty()) {
         os << "Map is empty.";
