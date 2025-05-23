@@ -41,6 +41,8 @@ public:
     size_t getWidth() const noexcept;
     size_t getHeight() const noexcept;
     size_t getChargerId() const noexcept;
+    size_t getSize() const { return height * width; }
+    std::optional<size_t> getIndex(size_t position, Direction direction);
 
     // Map operations
     bool isMapValid() const;

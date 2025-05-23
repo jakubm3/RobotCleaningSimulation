@@ -195,14 +195,8 @@ const Tile* Map::getTile(size_t index) const {
 }
 
 std::optional<size_t> Map::getIndex(size_t position, Direction direction) {
+    // TODO
 	return 0;
-}
-
-Tile* Map::getTile(size_t index) {
-	if (index < tiles.size()) {
-		return tiles[index].get();
-	}
-	return nullptr;
 }
 
 std::ostream& operator<<(std::ostream& os, const Map& map) {
