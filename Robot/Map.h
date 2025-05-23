@@ -19,10 +19,10 @@ enum class Direction {
 
 class Map {
 private:
-    size_t width;
-    size_t height;
+    size_t width = 0;
+    size_t height = 0;
     std::vector<std::unique_ptr<Tile>> tiles;
-    size_t chargerId;
+    size_t chargerId = 0;
 
 public:
     // Constructors and destructor

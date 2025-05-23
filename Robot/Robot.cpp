@@ -180,9 +180,7 @@ Robot::Robot(std::istream& in) {
 
 Robot::Robot(size_t mapWidth, size_t mapHeight, size_t chargerId) {
 	tilesToCheck.assign(mapWidth * mapHeight, false);
-	// TODO
-	// Load width x height map of unvisited tiles
-	// Explore chargerId
+	map = Map(mapWidth, mapHeight, chargerId);
 	position_ = chargerId;
 	chargerId_ = chargerId;
 	currTask = RobotAction::explore;
@@ -203,6 +201,15 @@ bool Robot::setPosition(size_t newPosition) {
 	position_ = newPosition;
 	// Explore curr tile
 	return true;
+}
+
+bool Robot::isRobotValid() const {
+	if (!map.isMapValid()) {
+		return false;
+	}
+	if (currTask == RobotAction::error) {
+		return false;
+	}
 }
 
 void Robot::setEfficiency(unsigned int efficiency) {
@@ -313,13 +320,51 @@ bool Robot::resetMemory() {
 }
 
 void Robot::loadRobot(std::istream& in) {
-	// TODO
+	map.loadMap(in);
+
+	in >> position_ >> chargerId_;
+	int currTaskInt;
+	in >> currTaskInt;
+	currTask = static_cast<RobotAction>(currTaskInt);
+	in >> cleaningEfficiency;
+	size_t tilesSize;
+	in >> tilesSize;
+	tilesToCheck.resize(tilesSize);
+	for (size_t i = 0; i < tilesSize; ++i) {
+		bool val;
+		in >> val;
+		tilesToCheck[i] = val;
+	}
+	size_t pathSize;
+	in >> pathSize;
+	std::queue<size_t> tempQueue;
+	for (size_t i = 0; i < pathSize; ++i) {
+		size_t elem;
+		in >> elem;
+		tempQueue.push(elem);
+	}
+	path = std::move(tempQueue);
 }
+
+
 void Robot::saveRobot(std::ostream& out) const {
-	// TODO
+	map.saveMap(out);
+	out << position_ << ' ' << chargerId_ << ' ';
+	out << static_cast<int>(currTask) << ' ';
+	out << cleaningEfficiency << ' ';
+	out << tilesToCheck.size() << ' ';
+	for (bool b : tilesToCheck) {
+		out << b << ' ';
+	}
+	out << path.size() << ' ';
+	std::queue<size_t> tempQueue = path;
+	while (!tempQueue.empty()) {
+		out << tempQueue.front() << ' ';
+		tempQueue.pop();
+	}
 }
 
 std::ostream& operator<<(std::ostream& os, const Robot& robot) {
-	os << "Nothing yet XD\n";
+	os << robot.map;
 	return os;
 }

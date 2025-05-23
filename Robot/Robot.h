@@ -33,6 +33,7 @@ public:
 	Robot(std::istream& in);
 	Robot(size_t mapWidth, size_t mapHeight, size_t chargerId);
 	bool setPosition(size_t newPosition);
+	bool isRobotValid() const;
 	void setEfficiency(unsigned int efficiency);
 	size_t getPosition() const noexcept { return position_; }
 	size_t getChargerId() const noexcept { return chargerId_; }
