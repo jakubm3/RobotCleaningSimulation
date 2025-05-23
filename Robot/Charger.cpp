@@ -7,9 +7,6 @@ std::unique_ptr<Tile> Charger::clone() const {
 }
 
 bool Charger::isMoveValid() const {
-    return true; // Robot może wejść na ładowarkę
+    return true; // robot może wejść na ładowarkę
 }
 
-//void Charger::print(std::ostream& os) const {
-//    os << 'B'; // Wypisuje 'B' jako bazę (ładowarkę)
-//}

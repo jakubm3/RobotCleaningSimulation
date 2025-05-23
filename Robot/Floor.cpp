@@ -37,7 +37,3 @@ bool Floor::isDirty() const {
 bool Floor::isMoveValid() const {
     return true; // Robot może wejść na podłogę
 }
-
-//void Floor::print(std::ostream& os) const {
-//    os << cleanliness; // Wypisuje poziom zabrudzenia jako cyfrę
-//}

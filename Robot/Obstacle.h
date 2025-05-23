@@ -10,5 +10,4 @@ public:
 
     // Nadpisane metody z klasy bazowej Tile
     bool isMoveValid() const override;
-    /*void print(std::ostream& os) const override;*/
 };
