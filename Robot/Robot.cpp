@@ -87,7 +87,7 @@ void Robot::cleanTile() {
 	// Drains energy = cleaningEfficiency
 }
 
-void Robot::createPath(size_t targetId) {
+bool Robot::createPath(size_t targetId) {
 	// TODO
 }
 
