@@ -47,6 +47,8 @@ public:
     bool canMoveOn(size_t tileId) const;
     void loadMap(std::istream& in);
     void updateTile(size_t tileId, const Tile& tileObj);
+    Tile* getTile(size_t index);
+    const Tile* getTile(size_t index) const;
     std::optional<size_t> getIndex(size_t position, Direction direction) const;
 
     // Output operator
