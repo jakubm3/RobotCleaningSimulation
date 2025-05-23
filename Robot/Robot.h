@@ -3,6 +3,7 @@
 #include <queue>
 #include <tuple>
 #include "Map.h"
+#include "Tile.h"
 
 enum class RobotAction {
 	move,
@@ -27,6 +28,12 @@ private:
 	RobotAction currTask;
 	unsigned int cleaningEfficiency = 0;
 	std::vector<bool> tilesToCheck;
+
+	Direction move();
+	void cleanTile();
+	bool createPath(size_t targetId);
+	bool findUnvisited(size_t& targetId) const;
+	bool findTrash(size_t& targetId) const;
 public:
 	Robot() = delete;
 	Robot(size_t mapWidth, size_t mapHeight, size_t chargerId);
@@ -38,11 +45,7 @@ public:
 	RobotAction getCurrTask() const noexcept { return currTask; }
 
 	std::tuple<RobotAction, Direction> makeAction();
-	Direction move();
-	void cleanTile();
-	void createPath(size_t targetId);
-	bool findUnvisited(size_t& targetId) const;
-	bool findTrash(size_t& targetId) const;
+	void exploreTile(size_t tileId, Tile& tileObj);
 
 	void orderToGoHome();
 	bool orderToMove(size_t id);
