@@ -1,15 +1,16 @@
 #pragma once
 #include <iostream>
 #include <queue>
+#include <stack>
 #include <tuple>
 #include "Map.h"
 
 enum class RobotAction {
 	move,
 	clean,
-	explore
+	explore,
+	error
 };
-
 
 class Robot {
 private:
@@ -24,13 +25,14 @@ private:
 	Direction move();
 	void cleanTile();
 	bool createPath(size_t targetId);
-	bool findUnvisited(size_t& targetId) const;
-	bool findTrash(size_t& targetId) const;
+	bool findUnvisited();
+	bool findTrash();
 public:
 	Robot() = delete;
 	Robot(std::istream& in);
 	Robot(size_t mapWidth, size_t mapHeight, size_t chargerId);
 	bool setPosition(size_t newPosition);
+	void setEfficiency(unsigned int efficiency);
 	size_t getPosition() const noexcept { return position_; }
 	size_t getChargerId() const noexcept { return chargerId_; }
 	unsigned int getCleaningEfficiency() const noexcept { return cleaningEfficiency; }
