@@ -1,19 +1,24 @@
 #include "Floor.h"
 #include <algorithm>
 
-Floor::Floor(int id, int cleanliness) : Tile(id) {
-    this->cleanliness = std::min(std::max(cleanliness, 0), 9); // poziom brudu między 0 a 9
+Floor::Floor(size_t id, unsigned int cleanliness) : Tile(id) {
+    this->cleanliness = std::min(cleanliness, 9u); // poziom brudu między 0 a 9
 }
 
-void Floor::getCleaned(int efficiency) {
-    cleanliness = std::max(0, cleanliness - efficiency);
+void Floor::getCleaned(unsigned int efficiency) {
+    if (efficiency >= cleanliness) {
+        cleanliness = 0;
+    }
+    else {
+        cleanliness -= efficiency;
+    }
 }
 
-void Floor::getDirty(int howDirty) {
-    cleanliness = std::min(9, cleanliness + howDirty);
+void Floor::getDirty(unsigned int howDirty) {
+    cleanliness = std::min(9u, cleanliness + howDirty);
 }
 
-int Floor::getCleanliness() const {
+unsigned int Floor::getCleanliness() const noexcept {
     return cleanliness;
 }
 
@@ -25,6 +30,6 @@ bool Floor::isMoveValid() const {
     return true; // Robot może wejść na podłogę
 }
 
-void Floor::print(std::ostream& os) const {
-    os << cleanliness; // Wypisuje poziom zabrudzenia jako cyfrę
-}
+//void Floor::print(std::ostream& os) const {
+//    os << cleanliness; // Wypisuje poziom zabrudzenia jako cyfrę
+//}

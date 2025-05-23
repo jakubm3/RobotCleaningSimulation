@@ -1,16 +1,16 @@
 #include "Tile.h"
 
-Tile::Tile(int id) : id(id) {}
+Tile::Tile(size_t id) : id(id) {}
 
-int Tile::getId() const {
+size_t Tile::getId() const noexcept {
     return id;
 }
 
-void Tile::setId(int newId) {
+void Tile::setId(size_t newId) {
     id = newId;
 }
 
-std::ostream& operator<<(std::ostream& os, const Tile& tile) {
-    tile.print(os);
-    return os;
-}
+//std::ostream& operator<<(std::ostream& os, const Tile& tile) {
+//    tile.print(os);
+//    return os;
+//}

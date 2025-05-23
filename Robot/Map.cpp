@@ -6,6 +6,8 @@ Map::Map(std::istream& in) {
 
 Map::Map(size_t mapWidth, size_t mapHeight, size_t chargerTileId) {
 	// TODO: fill with unvisited tiles with such sizes
+	width = mapWidth;
+	height = mapHeight;
 	chargerId = chargerTileId;
 }
 

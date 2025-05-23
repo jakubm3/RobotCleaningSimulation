@@ -1,11 +1,11 @@
 #include "Obstacle.h"
 
-Obstacle::Obstacle(int id) : Tile(id) {}
+Obstacle::Obstacle(size_t id) : Tile(id) {}
 
 bool Obstacle::isMoveValid() const {
     return false; // Robot nie może wejść na przeszkody
 }
 
-void Obstacle::print(std::ostream& os) const {
-    os << 'P'; // Wypisuje 'P' jako przeszkodę
-}
+//void Obstacle::print(std::ostream& os) const {
+//    os << 'P'; // Wypisuje 'P' jako przeszkodę
+//}
