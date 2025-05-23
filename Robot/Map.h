@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <iostream>
 #include <optional>
 #include "Tile.h"
 #include "Obstacle.h"
@@ -9,36 +10,47 @@
 #include "UnVisited.h"
 
 enum class Direction {
-	up,
-	down,
-	left,
-	right,
-	none
+    up,
+    down,
+    left,
+    right,
+    none
 };
 
 class Map {
 private:
-	size_t width;
-	size_t height;
-	size_t chargerId;
-	std::vector<std::unique_ptr<Tile>> tiles;
+    size_t width;
+    size_t height;
+    std::vector<std::unique_ptr<Tile>> tiles;
+    size_t chargerId;
 
 public:
-	Map() = default;
-	Map(std::istream& in);
-	Map(size_t mapWidth, size_t mapHeight, size_t chargerTileId);
+    // Constructors and destructor
+    Map() = default;
+    Map(std::istream& in);
+    Map(size_t mapWidth, size_t mapHeight, size_t chargerTileId);
 
-	size_t getWidth() const noexcept { return width; }
-	size_t getHeight() const noexcept { return height; }
-	size_t getChargerId() const noexcept { return chargerId; }
+    // Rule of five
+    ~Map() = default;
+    Map(const Map& other);
+    Map& operator=(const Map& other);
+    Map(Map&& other) noexcept = default;
+    Map& operator=(Map&& other) noexcept = default;
 
-	//TODO rule of five
+    // Getters
+    size_t getWidth() const noexcept;
+    size_t getHeight() const noexcept;
+    size_t getChargerId() const noexcept;
 
-	bool isMapValid() const;
-	bool canMoveOn(size_t tileId) const;
-	void loadMap(std::istream& in);
-	void updateTile(size_t tileId, const Tile& tileObj);
-	std::optional<size_t> getIndex(size_t position, Direction direction);
+    // Map operations
+    bool isMapValid() const;
+    bool canMoveOn(size_t tileId) const;
+    void loadMap(std::istream& in);
+    void updateTile(size_t tileId, const Tile& tileObj);
+    Tile* getTile(size_t index);
+    const Tile* getTile(size_t index) const;
+    std::optional<size_t> getIndex(size_t position, Direction direction) const;
 
-	friend std::ostream& operator<<(std::ostream& os, const Map& map);
+    // Output operator
+    friend std::ostream& operator<<(std::ostream& os, const Map& map);
 };
