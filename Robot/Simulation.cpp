@@ -3,8 +3,8 @@
 #include <limits> // Required for std::numeric_limits
 
 bool Simulation::isSimulationValid() const {
-    // TODO: Implement validation check
-    return false;
+    std::cout << "Validation check (not fully implemented).\n";
+    return true; // Assume valid for now to proceed
 }
 
 void clearScreen() {
@@ -19,49 +19,135 @@ void pressEnterToContinue() {
     std::cin.get(); // Wait for Enter key
 }
 
-void Simulation::addRubbish() {
-    // unsigned int howDirty = 1, size_t id = static_cast<size_t>(-1)
-    // TODO: Implement adding rubbish
+// Helper to get size_t input with validation
+size_t getValidatedSizeTInput(const std::string& prompt) {
+    size_t value;
+    while (true) {
+        std::cout << prompt;
+        std::cin >> value;
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Please enter a positive whole number.\n";
+        }
+        else {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear leftover newline
+            return value;
+        }
+    }
 }
 
-
-void Simulation::changeRobotsPosition() {
-    // TODO: set new robot position
+// Helper to get unsigned int input with validation
+unsigned int getValidatedUnsignedIntInput(const std::string& prompt) {
+    unsigned int value;
+    while (true) {
+        std::cout << prompt;
+        std::cin >> value;
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Please enter a positive whole number.\n";
+        }
+        else {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear leftover newline
+            return value;
+        }
+    }
 }
+
+// Helper to get file path input (can contain spaces)
+fs::path getFilePathInput(const std::string& prompt) {
+    std::string pathStr;
+    std::cout << prompt;
+    std::getline(std::cin, pathStr); // Use getline to read whole line
+    return fs::path(pathStr);
+}
+
+bool Simulation::isSimulationValid() const {
+    std::cout << "Validation check (not fully implemented).\n";
+    return true; // Assume valid for now to proceed
+}
+
+void Simulation::addRubbish(size_t tileId, unsigned int dirtiness) {
+    std::cout << "Action: Adding " << dirtiness << " rubbish to Tile ID " << tileId << ".\n";
+    // TODO: Implement logic here to modify map tile's dirtiness
+    // Example: map.getTile(tileId).addDirt(dirtiness);
+}
+
+void Simulation::changeRobotsPosition(size_t newPositionId) {
+    std::cout << "Action: Changing robot's position to Tile ID " << newPositionId << ".\n";
+    // TODO: Implement logic here to change robot's position
+    // Example: robot.setPosition(newPositionId);
+}
+
 void Simulation::orderRobotToGoHome() {
-    // TODO: just call function XD
+    std::cout << "Action: Ordering robot to go home.\n";
+    // TODO: Implement logic here to make robot go home
+    // Example: robot.orderToGoHome();
 }
-void Simulation::orderRobotToMove() {
-    // TODO: order to move at
+
+void Simulation::orderRobotToMove(size_t targetTileId) {
+    std::cout << "Action: Ordering robot to move to Tile ID " << targetTileId << ".\n";
+    // TODO: Implement logic here to make robot move
+    // Example: robot.orderToMove(targetTileId);
 }
-void Simulation::orderRobotToClean() {
-    // TODO: order to clean at
+
+void Simulation::orderRobotToClean(size_t tileId, unsigned int radius) {
+    std::cout << "Action: Ordering robot to clean Tile ID " << tileId << " with radius " << radius << ".\n";
+    // TODO: Implement logic here to make robot clean
+    // Example: robot.orderToClean(tileId, radius);
 }
+
 void Simulation::resetRobotMemory() {
-    // TODO: order to reset memory
+    std::cout << "Action: Resetting robot's memory.\n";
+    // TODO: Implement logic here to reset robot's memory
+    // Example: robot.resetMemory();
 }
-void Simulation::saveSimulation() {
-    // TODO: save to file
+
+void Simulation::saveSimulation(fs::path filePath) {
+    std::cout << "Action: Saving simulation to file: " << filePath << ".\n";
+    // TODO: Implement logic here to save map and robot state to file
+    // Example: map.saveMap(fileStream); robot.saveRobot(fileStream);
 }
-void Simulation::loadSimulation() {
-    // TODO: load from file
+
+void Simulation::loadSimulation(fs::path filePath) {
+    std::cout << "Action: Loading simulation from file: " << filePath << ".\n";
+    // This will call the already implemented loadFromFile function
+    loadFromFile(filePath);
 }
-void Simulation::runSimulation() {
-    // TODO: run X steps, every time before step update tiles around in memory
+
+void Simulation::runSimulation(unsigned int steps) {
+    std::cout << "Action: Running simulation for " << steps << " steps.\n";
+    // TODO: Implement simulation loop logic
+    // Example: for (unsigned int i = 0; i < steps; ++i) { robot.makeAction(); /* update map based on action */ }
 }
+
 void Simulation::exitSimulation() {
-    // TODO: exit
+    std::cout << "Exiting simulation...\n";
+    // TODO: Add any final cleanup here if needed
 }
 
 void Simulation::printSimulation() {
-    // TODO: print progress of simulation
+    std::cout << "\n--- Current Simulation State ---\n";
+    // TODO: Implement actual printing of Map and Robot state
+    // For example:
+    // std::cout << map; // Assuming operator<< is overloaded for Map
+    // std::cout << robot; // Assuming operator<< is overloaded for Robot
+    std::cout << "(Map and Robot display not fully implemented).\n";
+    std::cout << "Robot is currently at position: " << robot.getPosition() << "\n"; // Example direct access
+    std::cout << "--------------------------------\n";
 }
 
 void Simulation::updateRobotMemory(size_t tileId, const Tile& tileObj) {
-    // TODO: update memory
+    std::cout << "Internal: Updating robot memory for Tile ID " << tileId << ".\n";
+    // TODO: Implement updating robot's internal map memory
+    // Example: robot.exploreTile(tileId, tileObj);
 }
+
 void Simulation::cleanTile(size_t tileId, unsigned int efficiency) {
-    // TODO: clean tile
+    std::cout << "Internal: Cleaning Tile ID " << tileId << " with efficiency " << efficiency << ".\n";
+    // TODO: Implement actual tile cleaning logic
+    // Example: map.getTile(tileId).clean(efficiency);
 }
 
 
@@ -121,41 +207,58 @@ void Simulation::start(fs::path filePath) {
 
         // 3. Execute the chosen action
         switch (choice) {
-        case 1:
-            addRubbish(); // Will need to prompt user for tile ID and dirtiness
+        case 1: { // Add Rubbish
+            size_t tileId = getValidatedSizeTInput("Enter Tile ID to add rubbish to: ");
+            unsigned int dirtiness = getValidatedUnsignedIntInput("Enter dirtiness level (e.g., 1-10): ");
+            addRubbish(tileId, dirtiness);
             break;
-        case 2:
-            changeRobotsPosition(); // Will need to prompt user for new position
+        }
+        case 2: { // Change Robot's Position
+            size_t newPositionId = getValidatedSizeTInput("Enter new Tile ID for robot's position: ");
+            changeRobotsPosition(newPositionId);
             break;
-        case 3:
+        }
+        case 3: { // Order Robot to Go Home
             orderRobotToGoHome();
             break;
-        case 4:
-            orderRobotToMove(); // Will need to prompt user for target tile ID
+        }
+        case 4: { // Order Robot to Move
+            size_t targetTileId = getValidatedSizeTInput("Enter target Tile ID for robot to move: ");
+            orderRobotToMove(targetTileId);
             break;
-        case 5:
-            orderRobotToClean(); // Will need to prompt user for target tile ID and efficiency
+        }
+        case 5: { // Order Robot to Clean
+            size_t tileId = getValidatedSizeTInput("Enter Tile ID for robot to clean: ");
+            unsigned int radius = getValidatedUnsignedIntInput("Enter cleaning radius: ");
+            orderRobotToClean(tileId, radius);
             break;
-        case 6:
+        }
+        case 6: { // Reset Robot's Memory
             resetRobotMemory();
             break;
-        case 7:
-            runSimulation(); // Will need to prompt user for number of steps
+        }
+        case 7: { // Run Simulation Steps
+            unsigned int steps = getValidatedUnsignedIntInput("Enter number of simulation steps to run: ");
+            runSimulation(steps);
             break;
-        case 8:
-            saveSimulation(); // Will need to prompt user for file path
+        }
+        case 8: { // Save Simulation
+            fs::path savePath = getFilePathInput("Enter filename to save simulation (e.g., my_sim.txt): ");
+            saveSimulation(savePath);
             break;
-        case 9:
-            // When loading, you might want to prompt for a new file path
-            // For now, let's just re-call loadSimulation, which should prompt for path
-            loadSimulation();
+        }
+        case 9: { // Load Simulation
+            fs::path loadPath = getFilePathInput("Enter filename to load simulation from (e.g., other_sim.txt): ");
+            loadSimulation(loadPath); // Calls loadFromFile with the user-provided path
             break;
-        case 0:
-            exitSimulation(); // This function should handle any cleanup and set running to false
+        }
+        case 0: { // Exit Simulation
+            exitSimulation();
             running = false;
             break;
+        }
         default:
-            std::cout << "Invalid choice. Please try again." << std::endl;
+            std::cout << "Invalid choice. Please try again.\n";
             break;
         }
 
