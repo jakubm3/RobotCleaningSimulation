@@ -29,7 +29,7 @@ Robot/*.cache
 Robot/*.VC.db
 Robot/*.VC.VC.opendb
 
-# Pliki logw, tymczasowe, backupy w Robot/
+# Pliki logów, tymczasowe, backupy w Robot/
 Robot/*.log
 Robot/*.tmp
 Robot/*.bak
