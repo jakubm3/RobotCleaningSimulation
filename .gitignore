@@ -1,41 +1,44 @@
-# Ignoruj pliki binarne i tymczasowe w dowolnym podfolderze
-**/[Bb]in/
-**/[Oo]bj/
+# Ignoruj folder Visual Studio w katalogu g³ównym
+.vs/
 
-# Pliki kompilatora (intermediate, build, debug)
-**/*.obj
-**/*.exe
-**/*.dll
-**/*.lib
-**/*.pdb
-**/*.ipdb
-**/*.iobj
-**/*.ilk
+# Ignoruj pliki binarne i tymczasowe tylko w folderze Robot
+Robot/[Bb]in/
+Robot/[Oo]bj/
 
-# Visual Studio
-**/.vs/
-**/.vscode/
-**/*.user
-**/*.suo
-**/*.sdf
-**/*.cache
-**/*.VC.db
-**/*.VC.VC.opendb
+# Pliki kompilatora (intermediate, build, debug) w Robot/
+Robot/*.obj
+Robot/*.exe
+Robot/*.dll
+Robot/*.lib
+Robot/*.pdb
+Robot/*.ipdb
+Robot/*.iobj
+Robot/*.ilk
 
-# Logi, pliki tymczasowe i backupy
-**/*.log
-**/*.tmp
-**/*.bak
-**/*.ncb
-**/*.aps
-**/*.pch
+# Pliki Visual Studio w Robot/
+Robot/.vs/
+Robot/.vscode/
+Robot/*.user
+Robot/*.suo
+Robot/*.sdf
+Robot/*.cache
+Robot/*.VC.db
+Robot/*.VC.VC.opendb
 
-# Pliki systemowe
-**/Thumbs.db
-**/Desktop.ini
+# Pliki logów, tymczasowe, backupy w Robot/
+Robot/*.log
+Robot/*.tmp
+Robot/*.bak
+Robot/*.ncb
+Robot/*.aps
+Robot/*.pch
 
-# NuGet, MSBuild
-**/packages/
-**/*.nupkg
-**/project.lock.json
-**/project.fragment.lock.json
+# Pliki systemowe w Robot/
+Robot/Thumbs.db
+Robot/Desktop.ini
+
+# NuGet, MSBuild w Robot/
+Robot/packages/
+Robot/*.nupkg
+Robot/project.lock.json
+Robot/project.fragment.lock.json
