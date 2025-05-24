@@ -1,9 +1,13 @@
-# Ignoruj folder Visual Studio w katalogu g³ównym
+# Ignoruj globalny folder Visual Studio obok Robot/
 .vs/
 
-# Ignoruj pliki binarne i tymczasowe tylko w folderze Robot
+# Ignoruj foldery bin/ i obj/ w Robot/
 Robot/[Bb]in/
 Robot/[Oo]bj/
+
+# Ignoruj podfoldery x64 i Robot w Robot/
+Robot/x64/
+Robot/Robot/
 
 # Pliki kompilatora (intermediate, build, debug) w Robot/
 Robot/*.obj
