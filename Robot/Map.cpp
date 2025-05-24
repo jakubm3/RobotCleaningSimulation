@@ -197,6 +197,22 @@ const Tile* Map::getTile(size_t index) const {
     return nullptr;
 }
 
+Tile* Map::getTile(size_t index, Direction direction) {
+    std::optional<size_t> tileIndex = getIndex(index, direction);
+    if (tileIndex) {
+        return getTile(*tileIndex);
+    }
+    return nullptr;
+}
+
+const Tile* Map::getTile(size_t index, Direction direction) const {
+    std::optional<size_t> tileIndex = getIndex(index, direction);
+    if (tileIndex) {
+        return getTile(*tileIndex);
+    }
+    return nullptr;
+}
+
 void Map::saveMap(std::ostream& os) const {
     if (tiles.empty()) {
         os << "Map is empty.";
