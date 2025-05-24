@@ -1,41 +1,48 @@
-# Pliki binarne
-[Bb]in/
-[Oo]bj/
-
-# Pliki kompilatora (intermediate, build, debug)
-*.obj
-*.exe
-*.dll
-*.lib
-*.pdb
-*.ipdb
-*.iobj
-*.ilk
-
-# Pliki Visual Studio
+# Ignoruj globalny folder Visual Studio obok Robot/
 .vs/
-.vscode/
-*.user
-*.suo
-*.sdf
-*.cache
-*.VC.db
-*.VC.VC.opendb
 
-# Pliki logów, tymczasowe, backupy
-*.log
-*.tmp
-*.bak
-*.ncb
-*.aps
-*.pch
+# Ignoruj foldery bin/ i obj/ w Robot/
+Robot/[Bb]in/
+Robot/[Oo]bj/
 
-# Pliki systemowe
-Thumbs.db
-Desktop.ini
+# Ignoruj podfoldery x64 i Robot w Robot/
+Robot/x64/
+Robot/Robot/
 
-# NuGet, MSBuild
-packages/
-*.nupkg
-project.lock.json
-project.fragment.lock.json
+# Pliki kompilatora (intermediate, build, debug) w Robot/
+Robot/*.obj
+Robot/*.exe
+Robot/*.dll
+Robot/*.lib
+Robot/*.pdb
+Robot/*.ipdb
+Robot/*.iobj
+Robot/*.ilk
+
+# Pliki Visual Studio w Robot/
+Robot/.vs/
+Robot/.vscode/
+Robot/*.user
+Robot/*.suo
+Robot/*.sdf
+Robot/*.cache
+Robot/*.VC.db
+Robot/*.VC.VC.opendb
+
+# Pliki logw, tymczasowe, backupy w Robot/
+Robot/*.log
+Robot/*.tmp
+Robot/*.bak
+Robot/*.ncb
+Robot/*.aps
+Robot/*.pch
+
+# Pliki systemowe w Robot/
+Robot/Thumbs.db
+Robot/Desktop.ini
+
+# NuGet, MSBuild w Robot/
+Robot/packages/
+Robot/*.nupkg
+Robot/project.lock.json
+Robot/project.fragment.lock.json
