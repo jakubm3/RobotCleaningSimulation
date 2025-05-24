@@ -1,45 +1,53 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include <memory>
-#include <vector>
 #include <iostream>
 #include <fstream>
-#include "Tile.h"
+#include <filesystem>
+#include <sstream>
 #include "Robot.h"
+#include "Map.h"
+#include "FileManager.hpp"
+
+namespace fs = std::filesystem;
 
 class Simulation {
 private:
-    std::vector<std::unique_ptr<Tile>> tiles;
-    Robot robot;
-    int width;
-    int height;
-
-public:
-    // Constructor
-    Simulation() : width(0), height(0) {}
-
-    // Add rubbish to the simulation
-    void addRubbish(int howDirty = 1, int id = -1);
-
-    // Find tile with specific ID
-    Tile* findTileWithId(int id);
-
-    // Getters
-    int getWidth() const { return width; }
-    int getHeight() const { return height; }
+    Map map;
+    Robot robot = Robot(0, 0, 0);
 
     // Check if simulation setup is valid
     bool isSimulationValid() const;
 
-    // Run the simulation
-    void runSimulation(int simulationRuns);
+    // Simulation options
+    void addRubbish(size_t tileId, unsigned int dirtiness);
+    void changeRobotsPosition(size_t newPositionId); // Assuming robot moves to a tile ID
+    void orderRobotToGoHome(); // No parameters needed
+    void orderRobotToMove(size_t targetTileId); // Robot moves to specific tile
+    void orderRobotToClean(size_t tileId, unsigned int radius); // Robot cleans a specific tile with radius
+    void resetRobotMemory(); // No parameters needed
+    void saveSimulation(fs::path filePath); // Save to a specific file
+    void loadSimulation(fs::path filePath); // Load from a specific file
+    void runSimulation(unsigned int steps); // Run for N steps
+    void exitSimulation(); // No parameters needed
 
-    // Output operator
-    friend std::ostream& operator<<(std::ostream& os, const Simulation& simulation);
+    void printSimulation();
 
-    // Input operator
-    friend std::istream& operator>>(std::istream& is, Simulation& simulation);
+    // Robots interaction
+    void updateRobotMemory(size_t tileId, const Tile* tileObj);
+    void cleanTile(size_t tileId, unsigned int efficiency);
+
+public:
+    // Constructor
+    Simulation() = default;
+
+    // Opens interface
+    void start(fs::path filePath);
+
+    // Find tile with specific ID           chyba niepotrzebne?
+    //Tile* findTileWithId(size_t id) const;
+
+    void loadFromFile(fs::path filePath);
 };
 
 #endif // SIMULATION_H
