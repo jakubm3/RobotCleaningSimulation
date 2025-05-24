@@ -11,8 +11,7 @@
 enum class RobotAction {
 	move,
 	clean,
-	explore,
-	error
+	explore
 };
 
 class Robot {
@@ -30,6 +29,7 @@ private:
 	bool createPath(size_t targetId);
 	bool findUnvisited();
 	bool findTrash();
+	void clearMoveTargets();
 public:
 	Robot() = delete;
 	Robot(std::istream& in);
@@ -46,10 +46,10 @@ public:
 	std::tuple<RobotAction, Direction> makeAction();
 	void exploreTile(size_t tileId, const Tile* tileObj);
 
-	void orderToGoHome();
+	bool orderToGoHome();
 	bool orderToMove(size_t id);
 	bool orderToClean(size_t id, unsigned int radius);
-	bool resetMemory();
+	void resetMemory();
 
 	void loadRobot(std::istream& in);
 	void saveRobot(std::ostream& out) const;

@@ -147,7 +147,8 @@ void Simulation::orderRobotToClean(size_t tileId, unsigned int radius) {
 
 // Resets the robot's internal memory of the map.
 void Simulation::resetRobotMemory() {
-    if (robot.resetMemory()) {
+    robot.resetMemory();
+    if (true) {
         std::cout << "Robot's memory successfully reset.\n";
     }
     else {
@@ -222,11 +223,21 @@ void Simulation::runSimulation(unsigned int steps) {
                 }
             }
         }
-        std::cout << "Robot completed sensing and updating memory for current tile and its neighbors.\n";
+        /*std::cout << "Robot completed sensing and updating memory for current tile and its neighbors.\n";*/
         // --- END NEW EXPLORATION LOGIC ---
 
+        std::cout << robot;
+
         // 3. Robot performs an action (move, clean, explore) based on its updated internal map
-        std::tuple<RobotAction, Direction> actionResult = robot.makeAction();
+        std::tuple<RobotAction, Direction> actionResult;
+        try {
+             actionResult = robot.makeAction();
+        }
+        catch (const std::exception& e) {
+            std::cout << "Robot error: " << e.what();
+            std::cout << "Simulation finished after " << (i + 1) << " steps.\n";
+            return;
+        }
         RobotAction action = std::get<0>(actionResult);
 
         std::cout << "Robot action: ";
@@ -279,7 +290,7 @@ void Simulation::printSimulation() {
 void Simulation::updateRobotMemory(size_t tileId, const Tile* tileObj) {
     // This function acts as the bridge between the actual map and robot's memory.
     robot.exploreTile(tileId, tileObj); // Robot adds/updates its internal map knowledge
-    std::cout << "Internal: Robot's memory updated for Tile ID " << tileId << ".\n";
+    /*std::cout << "Internal: Robot's memory updated for Tile ID " << tileId << ".\n";*/
 }
 
 // Cleans a specific tile on the main map.
