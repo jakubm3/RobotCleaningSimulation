@@ -102,21 +102,27 @@ void Simulation::addRubbish(size_t tileId, unsigned int dirtiness) {
 
 // Changes the robot's current position to a new tile ID.
 void Simulation::changeRobotsPosition(size_t newPositionId) {
-    if (robot.setPosition(newPositionId)) {
-        std::cout << "Robot's position successfully changed to Tile ID: " << newPositionId << ".\n";
-        // After changing position, the robot should update its memory about the new tile
-        const Tile* currentTile = map.getTile(newPositionId); // Get the tile from the main map
-        if (currentTile) {
-            updateRobotMemory(newPositionId, currentTile); // Update robot's internal memory
-        }
-        else {
-            // This case should ideally not happen if setPosition was successful and map.getTile is robust
-            std::cerr << "Warning: Could not retrieve actual tile for ID " << newPositionId << " to update robot memory.\n";
-        }
+    robot.setPosition(newPositionId);
+    const Tile* currentTile = map.getTile(newPositionId); // Get the tile from the main map
+    if (currentTile) {
+        updateRobotMemory(newPositionId, currentTile); // Update robot's internal memory
     }
-    else {
-        std::cout << "Failed to change robot's position to Tile ID: " << newPositionId << ". Invalid position or unable to set.\n";
-    }
+
+    //if (robot.setPosition(newPositionId)) {
+    //    std::cout << "Robot's position successfully changed to Tile ID: " << newPositionId << ".\n";
+    //    // After changing position, the robot should update its memory about the new tile
+    //    const Tile* currentTile = map.getTile(newPositionId); // Get the tile from the main map
+    //    if (currentTile) {
+    //        updateRobotMemory(newPositionId, currentTile); // Update robot's internal memory
+    //    }
+    //    else {
+    //        // This case should ideally not happen if setPosition was successful and map.getTile is robust
+    //        std::cerr << "Warning: Could not retrieve actual tile for ID " << newPositionId << " to update robot memory.\n";
+    //    }
+    //}
+    //else {
+    //    std::cout << "Failed to change robot's position to Tile ID: " << newPositionId << ". Invalid position or unable to set.\n";
+    //}
 }
 
 // Orders the robot to navigate back to its charger.

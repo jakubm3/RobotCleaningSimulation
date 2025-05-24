@@ -152,6 +152,7 @@
     <ClInclude Include="FileManager.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="blocked.txt" />
     <Text Include="exampleSave.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

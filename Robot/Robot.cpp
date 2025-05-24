@@ -7,40 +7,24 @@ Direction Robot::move() {
 	size_t nextTarget = path.front();
 	path.pop();
 
-	auto neighbourUp = map.getIndex(position_, Direction::up);
-	auto neighbourDown= map.getIndex(position_, Direction::down);
-	auto neighbourLeft = map.getIndex(position_, Direction::left);
-	auto neighbourRight = map.getIndex(position_, Direction::right);
-
-	if (neighbourUp.has_value() && neighbourUp == nextTarget) {
-		position_ = nextTarget;
-		return Direction::up;
-	}
-	else if (neighbourDown.has_value() && neighbourDown == nextTarget) {
-		position_ = nextTarget;
-		return Direction::down;
-	}
-	else if (neighbourLeft.has_value() && neighbourLeft == nextTarget) {
-		position_ = nextTarget;
-		return Direction::left;
-	}
-	else if (neighbourRight.has_value() && neighbourRight == nextTarget) {
-		position_ = nextTarget;
-		return Direction::right;
+	for (Direction dir : {Direction::up, Direction::down, Direction::left, Direction::right}) {
+		auto neighbour = map.getIndex(position_, dir);
+		if (neighbour.has_value() && neighbour == nextTarget && map.canMoveOn(nextTarget)) {
+			position_ = nextTarget;
+			return dir;
+		}
+		else if (neighbour == nextTarget) {
+			// Calculate new route
+			if (createPath(path.back())) {
+				return move();
+			}
+			else {
+				break;
+			}
+		}
 	}
 
-	// Can't reach target, calculate new route
-	size_t targetId = path.back();
-	while (!path.empty()) {
-		path.pop();
-	}
-
-	if (createPath(targetId)) {
-		// Try new route
-		return move();
-	}
-
-	// Invalid move target
+	// Can't reach move target
 	clearMoveTargets();
 	throw std::runtime_error("Can't reach tile ID: " + std::to_string(nextTarget) + "\n");
 }
@@ -109,7 +93,7 @@ bool Robot::createPath(size_t targetId) {
 	return false;
 }
 
-bool Robot::findUnvisited() {
+bool Robot::createPathUnvisited() {
 	while (!path.empty()) {
 		path.pop();
 	}
@@ -157,7 +141,7 @@ bool Robot::findUnvisited() {
 	return false;
 }
 
-bool Robot::findTrash() {
+bool Robot::createPathTrash() {
 	while (!path.empty()) {
 		path.pop();
 	}
@@ -172,9 +156,58 @@ bool Robot::findTrash() {
 		size_t current = q.front();
 		Tile* tile = map.getTile(current);
 		q.pop();
-		
+
 		auto floor = dynamic_cast<Floor*>(tile);
 		if (floor && floor->isDirty()) {
+			std::stack<size_t> tempStack;
+			for (size_t v = current; v != -1; v = parent[v]) {
+				tempStack.push(v);
+			}
+			tempStack.pop();
+			while (!tempStack.empty()) {
+				path.push(tempStack.top());
+				tempStack.pop();
+			}
+			return true;
+		}
+
+		std::vector<std::optional<size_t>> neighbours;
+		neighbours.push_back(map.getIndex(current, Direction::up));
+		neighbours.push_back(map.getIndex(current, Direction::down));
+		neighbours.push_back(map.getIndex(current, Direction::left));
+		neighbours.push_back(map.getIndex(current, Direction::right));
+
+		for (auto neighbour : neighbours) {
+			if (neighbour.has_value() && map.canMoveOn(*neighbour)) {
+				size_t idx = *neighbour;
+				if (!visited[idx]) {
+					visited[idx] = true;
+					parent[idx] = current;
+					q.push(idx);
+				}
+			}
+		}
+	}
+	return false;
+}
+
+bool Robot::createPathToVisit() {
+	while (!path.empty()) {
+		path.pop();
+	}
+
+	std::vector<bool> visited(map.getSize(), false);
+	std::vector<size_t> parent(map.getSize(), std::numeric_limits<size_t>::max());
+	std::queue<size_t> q;
+
+	visited[position_] = true;
+	q.push(position_);
+	while (!q.empty()) {
+		size_t current = q.front();
+		Tile* tile = map.getTile(current);
+		q.pop();
+
+		if (tilesToCheck[current]) {
 			std::stack<size_t> tempStack;
 			for (size_t v = current; v != -1; v = parent[v]) {
 				tempStack.push(v);
@@ -212,26 +245,17 @@ Robot::Robot(std::istream& in) {
 }
 
 Robot::Robot(size_t mapWidth, size_t mapHeight, size_t chargerId) {
-	tilesToCheck.assign(mapWidth * mapHeight, false);
 	map = Map(mapWidth, mapHeight, chargerId);
+	tilesToCheck.assign(map.getSize(), false);
 	position_ = chargerId;
 	chargerId_ = chargerId;
 	currTask = RobotAction::explore;
 }
 
-bool Robot::setPosition(size_t newPosition) {
-	// Only if not in exploring mode
-	if (currTask == RobotAction::explore) {
-		return false;
-	}
-	// Clears path
+void Robot::setPosition(size_t newPosition) {
 	clearMoveTargets();
-
-	// TODO
-	// If placed on unvisited or invalid tile, exception
 	position_ = newPosition;
-	// Explore curr tile
-	return true;
+	currTask = RobotAction::explore;
 }
 
 bool Robot::isRobotValid() const {
@@ -249,10 +273,12 @@ void Robot::setEfficiency(unsigned int efficiency) {
 std::tuple<RobotAction, Direction> Robot::makeAction() {
 	// If in invalid place throw error
 	Tile* tile = map.getTile(position_);
-	if (!tile->isMoveValid()) {
+	if (position_ >= map.getSize() || !tile->isMoveValid()) {
 		clearMoveTargets();
 		throw std::runtime_error("Robot is on invalid tile\n");
 	}
+
+	tilesToCheck[position_] = false;
 
 	// Clean if trash
 	cleanTile();
@@ -261,11 +287,11 @@ std::tuple<RobotAction, Direction> Robot::makeAction() {
 	}
 
 	if (currTask == RobotAction::explore) {		// Exploring mode
-		if (path.empty() && findUnvisited()) {
+		if (path.empty() && createPathUnvisited()) {
 			// Succesfully found new tile to explore
 			return std::make_tuple(RobotAction::move, move());
 		}
-		else if (path.empty()){
+		else if (path.empty()) {
 			// All possible tiles explored
 			currTask = RobotAction::clean;
 			return makeAction();
@@ -276,7 +302,7 @@ std::tuple<RobotAction, Direction> Robot::makeAction() {
 		}
 	}
 	else if (currTask == RobotAction::move) {	// Moving mode
-		if (path.empty()) {	//TODO check if tiles to visit?
+		if (path.empty()) {
 			currTask = RobotAction::clean;
 			return makeAction();
 		}
@@ -293,7 +319,7 @@ std::tuple<RobotAction, Direction> Robot::makeAction() {
 		neighbours.push_back(map.getIndex(position_, Direction::right));
 
 		for (auto neighbour : neighbours) {
-			if (neighbour.has_value() && map.getTile(*neighbour)){
+			if (neighbour.has_value() && map.getTile(*neighbour)) {
 				if (auto floor = dynamic_cast<Floor*>(map.getTile(*neighbour))) {
 					if (floor->isDirty()) {
 						// Neighbour is dirty, go there
@@ -309,34 +335,32 @@ std::tuple<RobotAction, Direction> Robot::makeAction() {
 			// Go towards current target
 			return std::make_tuple(RobotAction::move, move());
 		}
-		else if (findTrash()){
+		else if (createPathTrash()) {
 			// Found trash in memory, go clean it
 			return std::make_tuple(RobotAction::move, move());
 		}
-		else if (false) {
-			// TODO
+		else if (createPathToVisit()) {
 			// Go to nearest tile to visit
+			return std::make_tuple(RobotAction::move, move());
 		}
-		else if (createPath(chargerId_)){
+		else if (createPath(chargerId_)) {
 			// Return to charger
 			if (position_ == chargerId_) {
 				// Already in charger
-				if (findUnvisited()) {
+				if (createPathUnvisited()) {
 					// Explore
 					currTask = RobotAction::explore;
 					return std::make_tuple(RobotAction::move, move());
 				}
 				else {
-					// Nothing to explore
-					// TODO
-					// ask to continue?
-					// clean efficiently
-					std::cout << "finished\n";
+					// Nothing to do - all complete
+					currTask = RobotAction::none;
+					return makeAction();
 				}
 			}
 			return std::make_tuple(RobotAction::move, move());
 		}
-		else if (findUnvisited()) {
+		else if (createPathUnvisited()) {
 			// Can't reach charger, explore tiles
 			currTask = RobotAction::explore;
 			return std::make_tuple(RobotAction::move, move());
@@ -345,6 +369,9 @@ std::tuple<RobotAction, Direction> Robot::makeAction() {
 			// Can't reach charger and nothing to explore, error
 			throw std::runtime_error("Robot can't reach charger\n");
 		}
+	}
+	else if (currTask == RobotAction::none) {
+		return std::make_tuple(RobotAction::none, Direction::none);
 	}
 
 	throw std::runtime_error("Unknown mode\n");
@@ -372,50 +399,77 @@ bool Robot::orderToMove(size_t id) {
 	return true;
 }
 
+void Robot::orderToCleanEfficiently() {
+	orderToClean(position_, -1);
+}
+
 bool Robot::orderToClean(size_t id, unsigned int radius) {
-	if (currTask == RobotAction::explore) {
+	clearMoveTargets();
+	if (!(createPath(id))) {
 		return false;
 	}
-	// TODO
+	currTask = RobotAction::move;
+
+	std::vector<bool> visited(tilesToCheck.size(), false);
+	std::queue<std::pair<size_t, size_t>> q; // (index, distance)
+	std::vector<size_t> parent(map.getSize(), std::numeric_limits<size_t>::max());
+
+	q.push({ id, 0 });
+	parent[id] = id;
+	visited[id] = true;
+	tilesToCheck[id] = true;
+
+	while (!q.empty()) {
+		auto [index, dist] = q.front();
+		q.pop();
+		if (dist > radius) continue;
+
+		const Tile* tile = map.getTile(index);
+		if (!tile || !tile->isMoveValid() || dynamic_cast<const UnVisited*>(tile)) continue;
+
+		if (!tilesToCheck[parent[index]]) {
+			tilesToCheck[index] = true;
+		}
+
+		for (Direction dir : {Direction::up, Direction::down, Direction::left, Direction::right}) {
+			std::optional<size_t> nIndex = map.getIndex(index, dir);
+			if (nIndex && !visited[*nIndex]) {
+				visited[*nIndex] = true;
+				parent[*nIndex] = index;
+				q.push({ *nIndex, dist + 1 });
+			}
+		}
+	}
 	return true;
 }
 
 void Robot::resetMemory() {
 	clearMoveTargets();
 	map = Map(map.getWidth(), map.getHeight(), map.getChargerId());
-	Charger* charger = new Charger();
-	map.updateTile(map.getChargerId(), charger);
-	delete charger;
+	currTask = RobotAction::explore;
 }
 
 void Robot::loadRobot(std::istream& in) {
+	// 1. Odczytaj map ze strumienia a do pustej linii
 	std::stringstream mapStream;
 	std::string line;
-
 	while (std::getline(in, line)) {
-		bool isEmptyRow = true;
-		for (char c : line) {
-			if (c != '0' && c != ' ' && c != '\t') {
-				isEmptyRow = false;
-				break;
-			}
-		}
-
-		if (isEmptyRow) {
-			break;
-		}
-
+		if (line.empty()) break; // pusta linia jako separator
 		mapStream << line << "\n";
 	}
-
 	map.loadMap(mapStream);
 
-	in >> position_ >> chargerId_;
+	// 2. Wczytaj pozycje i ustawienia
 	int currTaskInt;
+	size_t tilesSize = 0;
+	size_t pathSize = 0;
+
+	in >> position_ >> chargerId_;
 	in >> currTaskInt;
 	currTask = static_cast<RobotAction>(currTaskInt);
 	in >> cleaningEfficiency;
-	size_t tilesSize;
+
+	// 3. Wczytaj tilesToCheck
 	in >> tilesSize;
 	tilesToCheck.resize(tilesSize);
 	for (size_t i = 0; i < tilesSize; ++i) {
@@ -423,7 +477,8 @@ void Robot::loadRobot(std::istream& in) {
 		in >> val;
 		tilesToCheck[i] = val;
 	}
-	size_t pathSize;
+
+	// 4. Wczytaj path
 	in >> pathSize;
 	std::queue<size_t> tempQueue;
 	for (size_t i = 0; i < pathSize; ++i) {
@@ -436,21 +491,30 @@ void Robot::loadRobot(std::istream& in) {
 
 
 void Robot::saveRobot(std::ostream& out) const {
+	// 1. Zapisz map
 	map.saveMap(out);
 	out << "\n";
+
+	// 2. Zapisz pozycje i ustawienia
 	out << position_ << ' ' << chargerId_ << ' ';
 	out << static_cast<int>(currTask) << ' ';
 	out << cleaningEfficiency << ' ';
+
+	// 3. Zapisz tilesToCheck
 	out << tilesToCheck.size() << ' ';
 	for (bool b : tilesToCheck) {
 		out << b << ' ';
 	}
+
+	// 4. Zapisz path
 	out << path.size() << ' ';
 	std::queue<size_t> tempQueue = path;
 	while (!tempQueue.empty()) {
 		out << tempQueue.front() << ' ';
 		tempQueue.pop();
 	}
+
+	out << "\n"; // kocowy newline dla czytelnoci
 }
 
 void replaceCharAtIndex(std::string& mapStr, size_t index1D, char newChar, size_t width) {
@@ -469,6 +533,9 @@ std::ostream& operator<<(std::ostream& os, const Robot& robot) {
 	oss << robot.map;
 	std::string mapStr = oss.str();
 	replaceCharAtIndex(mapStr, robot.position_, 'R', robot.map.getWidth());
+	if (!robot.path.empty()) {
+		replaceCharAtIndex(mapStr, robot.path.back(), 'X', robot.map.getWidth());
+	}
 	os << mapStr;
 	os << "\n";
 	os << "Current objective: ";
@@ -486,10 +553,6 @@ std::ostream& operator<<(std::ostream& os, const Robot& robot) {
 	default:
 		os << "unknown\n";
 		break;
-	}
-	if (!robot.path.empty()) {
-		os << "Current move target ID: " << robot.path.front() << "\n";
-		os << "Final destination move target ID: " << robot.path.back() << "\n";
 	}
 	return os;
 }
