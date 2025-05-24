@@ -11,8 +11,7 @@
 enum class RobotAction {
 	move,
 	clean,
-	explore,
-	error
+	explore
 };
 
 class Robot {
@@ -30,6 +29,7 @@ private:
 	bool createPath(size_t targetId);
 	bool findUnvisited();
 	bool findTrash();
+	void clearPathQueue();
 public:
 	Robot() = delete;
 	Robot(std::istream& in);

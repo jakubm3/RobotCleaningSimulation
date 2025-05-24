@@ -27,7 +27,8 @@ Direction Robot::move() {
 	}
 
 	// Invalid move target
-	throw std::runtime_error("Invalid move target");
+	clearPathQueue();
+	throw std::runtime_error("Can't move on tile ID: " + std::to_string(nextTarget) + "\n");
 }
 
 void Robot::cleanTile() {
@@ -39,8 +40,12 @@ void Robot::cleanTile() {
 	else {
 		setEfficiency(0u);
 	}
-	// TODO
-	// Drains energy
+}
+
+void Robot::clearPathQueue() {
+	while (!path.empty()) {
+		path.pop();
+	}
 }
 
 bool Robot::createPath(size_t targetId) {
@@ -192,9 +197,7 @@ bool Robot::setPosition(size_t newPosition) {
 		return false;
 	}
 	// Clears path
-	while (!path.empty()) {
-		path.pop();
-	}
+	clearPathQueue();
 
 	// TODO
 	// If placed on unvisited or invalid tile, exception
@@ -207,9 +210,6 @@ bool Robot::isRobotValid() const {
 	if (!map.isMapValid()) {
 		return false;
 	}
-	if (currTask == RobotAction::error) {
-		return false;
-	}
 	return true;
 }
 
@@ -219,11 +219,11 @@ void Robot::setEfficiency(unsigned int efficiency) {
 }
 
 std::tuple<RobotAction, Direction> Robot::makeAction() {
-	// If in invalid place or error, return error
+	// If in invalid place throw error
 	Tile* tile = map.getTile(position_);
-	if (!tile->isMoveValid() || currTask == RobotAction::error) {
-		currTask = RobotAction::error;
-		return std::make_tuple(RobotAction::error, Direction::none);
+	if (!tile->isMoveValid()) {
+		clearPathQueue();
+		throw std::runtime_error("Robot is on invalid tile\n");
 	}
 
 	// Clean if trash
@@ -263,16 +263,7 @@ std::tuple<RobotAction, Direction> Robot::makeAction() {
 		}
 	}
 
-	Direction direction;
-	try {
-		 direction = move();
-	}
-	catch (const std::runtime_error& e) {
-		currTask = RobotAction::error;
-		return std::make_tuple(RobotAction::error, Direction::none);
-	}
-	
-	return std::make_tuple(RobotAction::move, direction);
+	return std::make_tuple(RobotAction::move, move());
 }
 
 void Robot::exploreTile(size_t tileId, const Tile* tileObj) {
@@ -280,9 +271,8 @@ void Robot::exploreTile(size_t tileId, const Tile* tileObj) {
 }
 
 void Robot::orderToGoHome() {
-	while (!path.empty()) {
-		path.pop();
-	}
+	// TODO
+	clearPathQueue();
 	currTask = RobotAction::move;
 	createPath(chargerId_);
 }
@@ -292,9 +282,7 @@ bool Robot::orderToMove(size_t id) {
 		return false; 
 	}
 	// TODO moving while not explored all
-	while (!path.empty()) {
-		path.pop();
-	}
+	clearPathQueue();
 	createPath(id);
 	currTask = RobotAction::move;
 	return true;
