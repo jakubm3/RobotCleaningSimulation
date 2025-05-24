@@ -39,4 +39,3 @@ packages/
 *.nupkg
 project.lock.json
 project.fragment.lock.json
-/Robot/Robot.vcxproj.user

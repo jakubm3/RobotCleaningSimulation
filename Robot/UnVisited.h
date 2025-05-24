@@ -1,9 +1,9 @@
 #pragma once
 #include "Tile.h"
 
-class Obstacle : public Tile {
+class UnVisited : public Tile {
 public:
-    Obstacle(size_t id = 0);
+    UnVisited(size_t id = 0);
 
     // Virtual copy constructor
     std::unique_ptr<Tile> clone() const override;

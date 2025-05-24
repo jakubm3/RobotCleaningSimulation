@@ -131,20 +131,28 @@
     <ClCompile Include="Charger.cpp" />
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="Obstacle.cpp" />
+    <ClCompile Include="Robot.cpp" />
     <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="UnVisited.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Charger.h" />
     <ClInclude Include="Floor.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="Robot.h" />
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="UnVisited.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileManager.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="exampleSave.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
