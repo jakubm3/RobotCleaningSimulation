@@ -9,6 +9,15 @@
 #include "Map.h"
 #include "FileManager.hpp"
 
+// Don't forget to include these for random number generation in the .cpp,
+// and potentially for std::optional and std::tuple if your Robot.h or
+// other parts of your code use them directly.
+// #include <random>
+// #include <chrono>
+// #include <optional>
+// #include <tuple>
+
+
 namespace fs = std::filesystem;
 
 class Simulation {
@@ -21,6 +30,9 @@ private:
 
     // Simulation options
     void addRubbish(size_t tileId, unsigned int dirtiness);
+    // NEW METHOD DECLARATION
+    void addSerialRubbish(unsigned int numberOfRubbishPoints, unsigned int maxDirtiness);
+
     void changeRobotsPosition(size_t newPositionId); // Assuming robot moves to a tile ID
     void orderRobotToGoHome(); // No parameters needed
     void orderRobotToMove(size_t targetTileId); // Robot moves to specific tile
@@ -40,10 +52,18 @@ private:
 
 public:
     // Constructor
-    Simulation() = default;
+    // It's a good idea to have a constructor that can initialize map and robot
+    // with meaningful defaults or based on input, especially if you plan to
+    // create a new simulation without loading from a file.
+    Simulation(size_t width = 0, size_t height = 0, size_t chargerId = 0)
+        : map(width, height, chargerId), robot(width, height, chargerId) {
+    }
+
+    // Original default constructor, now the one above handles both cases
+    // Simulation() = default;
 
     // Opens interface
-    void start(fs::path filePath);
+    void start(fs::path filePath = ""); // Make filePath optional for new simulations
 
     void loadFromFile(fs::path filePath);
 };

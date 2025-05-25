@@ -1,13 +1,14 @@
 #include "Simulation.h"
 #include <string>
 #include <iostream>
-#include <limits>
+#include <limits> // For numeric_limits
 #include <stdexcept>
 #include <fstream>
 #include <sstream>
-#include <random>    // For random number generation
-#include <chrono>    // For seeding random number generator
-#include <optional>  // For optional return types
+#include <random>     // For random number generation
+#include <chrono>     // For seeding random number generator
+#include <optional>   // For optional return types
+#include <tuple>      // For std::tuple (assuming Robot::makeAction returns a tuple)
 
 // Static random device and generator for random tile selection
 static std::mt19937 gen(std::chrono::system_clock::now().time_since_epoch().count());
@@ -23,6 +24,8 @@ void clearScreen() {
 
 void pressEnterToContinue() {
     std::cout << "\nPress Enter to continue...";
+    // Consume any leftover newline characters from previous input
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cin.get(); // Reads the next character, typically the newline left by previous input
 }
 
@@ -117,6 +120,53 @@ void Simulation::addRubbish(size_t tileId, unsigned int dirtiness) {
         std::cout << "Failed to add rubbish: Tile ID " << tileId << " does not exist on the map.\n";
     }
 }
+
+// NEW: Method to add a specified number of rubbish points randomly on the map.
+void Simulation::addSerialRubbish(unsigned int numberOfRubbishPoints, unsigned int maxDirtiness) {
+    if (map.getSize() == 0) {
+        std::cerr << "Error: Map is empty, cannot add serial rubbish.\n";
+        return;
+    }
+    if (maxDirtiness == 0) {
+        std::cerr << "Error: Maximum dirtiness level cannot be zero.\n";
+        return;
+    }
+
+    std::cout << "Action: Attempting to add " << numberOfRubbishPoints << " rubbish points randomly with max dirtiness " << maxDirtiness << ".\n";
+
+    std::uniform_int_distribution<size_t> tileIdDistrib(0, map.getSize() - 1);
+    std::uniform_int_distribution<unsigned int> dirtinessDistrib(1, maxDirtiness); // Dirtiness starts from 1
+
+    unsigned int successfulAdditions = 0;
+    const size_t maxAttemptsPerPoint = map.getSize(); // Max attempts to find a Floor tile for each rubbish point
+
+    for (unsigned int i = 0; i < numberOfRubbishPoints; ++i) {
+        size_t attempts = 0;
+        bool pointAdded = false;
+
+        while (attempts < maxAttemptsPerPoint && !pointAdded) {
+            size_t randomTileId = tileIdDistrib(gen);
+            Tile* targetTile = map.getTile(randomTileId);
+
+            if (targetTile) {
+                Floor* floorTile = dynamic_cast<Floor*>(targetTile);
+                if (floorTile) {
+                    unsigned int dirtiness = dirtinessDistrib(gen);
+                    floorTile->getDirty(dirtiness);
+                    std::cout << "  Added " << dirtiness << " rubbish to Tile ID " << randomTileId << ". New cleanliness: " << floorTile->getCleanliness() << ".\n";
+                    successfulAdditions++;
+                    pointAdded = true; // Mark as added, move to next point
+                }
+            }
+            attempts++;
+        }
+        if (!pointAdded) {
+            std::cerr << "Warning: Could not find a suitable Floor tile for rubbish point " << (i + 1) << " after " << maxAttemptsPerPoint << " attempts. Skipping this point.\n";
+        }
+    }
+    std::cout << "Successfully added " << successfulAdditions << " rubbish points in total.\n";
+}
+
 
 // Changes the robot's current position to a new tile ID.
 void Simulation::changeRobotsPosition(size_t newPositionId) {
@@ -250,7 +300,7 @@ void Simulation::runSimulation(unsigned int steps) {
         case RobotAction::none: { // Handle RobotAction::none
             std::cout << "None (Robot has completed all known tasks).\n";
             std::cout << "Robot has completed all known exploration and cleaning tasks.\n";
-            std::cout << "Do you want to order the robot to clean efficiently (y/n)? ";
+            std::cout << "Do you want to order the robot to clean efficiently (y/N)? ";
             std::string response;
             std::getline(std::cin, response); // Read user response
 
@@ -262,7 +312,7 @@ void Simulation::runSimulation(unsigned int steps) {
                 // which will then execute the newly ordered task if any.
             }
             else {
-                std::cout << "Efficient cleaning not ordered. Robot will remain idle or continue if new tasks appear.\n";
+                std::cout << "Simulation finished.\n";
                 return;
             }
             break; // Break from switch, continue for loop
@@ -324,8 +374,8 @@ void Simulation::cleanTile(size_t tileId, unsigned int efficiency) {
 void Simulation::start(fs::path filePath) {
     clearScreen();
     std::cout << "---------------------------------------------------\n";
-    std::cout << "         WELCOME TO THE ROBOT VACUUM CLEANER       \n";
-    std::cout << "               SIMULATION GAME!                    \n";
+    std::cout << "          WELCOME TO THE ROBOT VACUUM CLEANER        \n";
+    std::cout << "                SIMULATION GAME!                   \n";
     std::cout << "---------------------------------------------------\n";
     std::cout << "\n";
 
@@ -351,16 +401,17 @@ void Simulation::start(fs::path filePath) {
         printSimulation(); // Always show current state at the start of each loop iteration
 
         std::cout << "\n--- Main Menu ---\n";
-        std::cout << "1. Add Rubbish to a Tile\n";
-        std::cout << "2. Change Robot's Position\n";
-        std::cout << "3. Order Robot to Go Home\n";
-        std::cout << "4. Order Robot to Move to a Tile\n";
-        std::cout << "5. Order Robot to Clean a Tile\n";
-        std::cout << "6. Reset Robot's Memory\n";
-        std::cout << "7. Run Simulation Steps\n";
-        std::cout << "8. Save Current Simulation State\n";
-        std::cout << "9. Load Simulation from File\n";
-        std::cout << "10. Order Robot to Clean Efficiently (Radius -1)\n"; // NEW MENU OPTION
+        std::cout << "1. Add Rubbish to a Tile (single)\n"; // Renamed for clarity
+        std::cout << "2. Add Rubbish to Multiple Random Tiles (serial)\n"; // NEW MENU OPTION
+        std::cout << "3. Change Robot's Position\n";
+        std::cout << "4. Order Robot to Go Home\n";
+        std::cout << "5. Order Robot to Move to a Tile\n";
+        std::cout << "6. Order Robot to Clean a Tile\n";
+        std::cout << "7. Reset Robot's Memory\n";
+        std::cout << "8. Run Simulation Steps\n";
+        std::cout << "9. Save Current Simulation State\n";
+        std::cout << "10. Load Simulation from File\n";
+        std::cout << "11. Order Robot to Clean Efficiently\n";
         std::cout << "0. Exit Simulation\n";
         std::cout << "Enter your choice: ";
 
@@ -384,7 +435,7 @@ void Simulation::start(fs::path filePath) {
         }
 
         switch (choice) {
-        case 1: { // Add Rubbish
+        case 1: { // Add Rubbish (single)
             std::string input;
             size_t tileId;
             bool foundFloorTile = false; // Flag to indicate if a Floor tile was found
@@ -449,46 +500,52 @@ void Simulation::start(fs::path filePath) {
             addRubbish(tileId, dirtiness); // Call the existing addRubbish with the determined tileId
             break;
         }
-        case 2: { // Change Robot's Position
+        case 2: { // NEW: Add Rubbish to Multiple Random Tiles (serial)
+            unsigned int numPoints = getValidatedUnsignedIntInput("Enter number of rubbish points to add: ");
+            unsigned int maxDirtiness = getValidatedUnsignedIntInput("Enter maximum dirtiness level for each point (e.g., 1-9): ");
+            addSerialRubbish(numPoints, maxDirtiness);
+            break;
+        }
+        case 3: { // Change Robot's Position (shifted from 2)
             size_t newPositionId = getValidatedSizeTInput("Enter new Tile ID for robot's position: ");
             changeRobotsPosition(newPositionId);
             break;
         }
-        case 3: { // Order Robot to Go Home
+        case 4: { // Order Robot to Go Home (shifted from 3)
             orderRobotToGoHome();
             break;
         }
-        case 4: { // Order Robot to Move
+        case 5: { // Order Robot to Move (shifted from 4)
             size_t targetTileId = getValidatedSizeTInput("Enter target Tile ID for robot to move: ");
             orderRobotToMove(targetTileId);
             break;
         }
-        case 5: { // Order Robot to Clean
+        case 6: { // Order Robot to Clean (shifted from 5)
             size_t tileId = getValidatedSizeTInput("Enter Tile ID for robot to clean: ");
             unsigned int radius = getValidatedUnsignedIntInput("Enter cleaning radius: ");
             orderRobotToClean(tileId, radius);
             break;
         }
-        case 6: { // Reset Robot's Memory
+        case 7: { // Reset Robot's Memory (shifted from 6)
             resetRobotMemory();
             break;
         }
-        case 7: { // Run Simulation Steps
+        case 8: { // Run Simulation Steps (shifted from 7)
             unsigned int steps = getValidatedUnsignedIntInput("Enter number of simulation steps to run: ");
             runSimulation(steps);
             break;
         }
-        case 8: { // Save Simulation
+        case 9: { // Save Simulation (shifted from 8)
             fs::path savePath = getFilePathInput("Enter filename to save simulation (e.g., my_sim.txt): ");
             saveSimulation(savePath);
             break;
         }
-        case 9: { // Load Simulation
+        case 10: { // Load Simulation (shifted from 9)
             fs::path loadPath = getFilePathInput("Enter filename to load simulation from (e.g., other_sim.txt): ");
             loadSimulation(loadPath);
             break;
         }
-        case 10: { // NEW: Order Robot to Clean Efficiently (Radius -1)
+        case 11: { // Order Robot to Clean Efficiently (shifted from 10)
             orderRobotToCleanEfficiently();
             break;
         }
