@@ -25,6 +25,7 @@ private:
     void orderRobotToGoHome(); // No parameters needed
     void orderRobotToMove(size_t targetTileId); // Robot moves to specific tile
     void orderRobotToClean(size_t tileId, unsigned int radius); // Robot cleans a specific tile with radius
+    void orderRobotToCleanEfficiently(); // NEW: Declare this function here!
     void resetRobotMemory(); // No parameters needed
     void saveSimulation(fs::path filePath); // Save to a specific file
     void loadSimulation(fs::path filePath); // Load from a specific file
@@ -43,9 +44,6 @@ public:
 
     // Opens interface
     void start(fs::path filePath);
-
-    // Find tile with specific ID           chyba niepotrzebne?
-    //Tile* findTileWithId(size_t id) const;
 
     void loadFromFile(fs::path filePath);
 };

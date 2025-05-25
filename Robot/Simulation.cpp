@@ -5,12 +5,11 @@
 #include <stdexcept>
 #include <fstream>
 #include <sstream>
-#include <random>    // NEW: For random number generation
-#include <chrono>    // NEW: For seeding random number generator (good practice, though not strictly required by problem)
+#include <random>    // For random number generation
+#include <chrono>    // For seeding random number generator
 #include <optional>  // For optional return types
 
 // Static random device and generator for random tile selection
-// NEW: Declaring these globally or as static members in Simulation.cpp
 static std::mt19937 gen(std::chrono::system_clock::now().time_since_epoch().count());
 
 // --- Helper functions ---
@@ -22,74 +21,72 @@ void clearScreen() {
 #endif
 }
 
-// MODIFIED: Simplified to allow one click
 void pressEnterToContinue() {
     std::cout << "\nPress Enter to continue...";
-    // We now rely on the calling functions (like getValidated... or the main menu loop)
-    // to clear the input buffer *before* calling pressEnterToContinue().
-    std::cin.get();
+    std::cin.get(); // Reads the next character, typically the newline left by previous input
 }
 
-// MODIFIED: To handle empty input more robustly
+// Function to get validated size_t input from the user
 size_t getValidatedSizeTInput(const std::string& prompt) {
     size_t value;
     std::string line;
     while (true) {
         std::cout << prompt;
-        std::getline(std::cin, line); // Read the whole line
+        std::getline(std::cin, line); // Read the whole line of input
 
         if (line.empty()) {
             std::cout << "Input cannot be empty. Please enter a positive whole number.\n";
-            // No need to clear/ignore here, getline already consumed the line
-            continue; // Re-prompt
+            continue; // Re-prompt if input is empty
         }
 
         std::stringstream ss(line);
-        ss >> value;
-        if (ss.fail() || !ss.eof()) { // Check for parsing failure or extraneous characters
+        ss >> value; // Attempt to parse the string to size_t
+        // Check for parsing failure or if there are extra characters after the number
+        if (ss.fail() || !ss.eof()) {
             std::cout << "Invalid input. Please enter a positive whole number.\n";
         }
         else {
-            return value;
+            return value; // Return valid input
         }
     }
 }
 
-// MODIFIED: To handle empty input more robustly
+// Function to get validated unsigned int input from the user
 unsigned int getValidatedUnsignedIntInput(const std::string& prompt) {
     unsigned int value;
     std::string line;
     while (true) {
         std::cout << prompt;
-        std::getline(std::cin, line); // Read the whole line
+        std::getline(std::cin, line); // Read the whole line of input
 
         if (line.empty()) {
             std::cout << "Input cannot be empty. Please enter a positive whole number.\n";
-            // No need to clear/ignore here, getline already consumed the line
-            continue; // Re-prompt
+            continue; // Re-prompt if input is empty
         }
 
         std::stringstream ss(line);
-        ss >> value;
-        if (ss.fail() || !ss.eof()) { // Check for parsing failure or extraneous characters
+        ss >> value; // Attempt to parse the string to unsigned int
+        // Check for parsing failure or if there are extra characters after the number
+        if (ss.fail() || !ss.eof()) {
             std::cout << "Invalid input. Please enter a positive whole number.\n";
         }
         else {
-            return value;
+            return value; // Return valid input
         }
     }
 }
 
+// Function to get file path input from the user
 fs::path getFilePathInput(const std::string& prompt) {
     std::string pathStr;
     std::cout << prompt;
-    std::getline(std::cin, pathStr);
+    std::getline(std::cin, pathStr); // Read the entire line for the path
     return fs::path(pathStr);
 }
 
-// --- Simulation Option Functions (addRubbish function itself remains unchanged) ---
+// --- Simulation Option Functions ---
 
-// Validates if the map is properly set up and ready.
+// Validates if the map is properly set up and ready for simulation.
 bool Simulation::isSimulationValid() const {
     if (!map.isMapValid()) {
         std::cerr << "Error: The map is not valid for simulation.\n";
@@ -99,17 +96,17 @@ bool Simulation::isSimulationValid() const {
     return true;
 }
 
-// addRubbish function itself remains unchanged.
-// The modification for random position is handled in Simulation::start()
+// Adds rubbish to a specified tile ID with a given dirtiness level.
 void Simulation::addRubbish(size_t tileId, unsigned int dirtiness) {
     std::cout << "Action: Attempting to add " << dirtiness << " rubbish to Tile ID: " << tileId << ".\n";
 
     Tile* targetTile = map.getTile(tileId);
 
     if (targetTile) {
+        // Dynamically cast to Floor* to check if it's a cleanable tile
         Floor* floorTile = dynamic_cast<Floor*>(targetTile);
         if (floorTile) {
-            floorTile->getDirty(dirtiness);
+            floorTile->getDirty(dirtiness); // Apply dirtiness
             std::cout << "Rubbish added to Tile " << tileId << ". New cleanliness: " << floorTile->getCleanliness() << ".\n";
         }
         else {
@@ -121,28 +118,26 @@ void Simulation::addRubbish(size_t tileId, unsigned int dirtiness) {
     }
 }
 
-// The rest of the Simulation::* functions are unchanged from the previous version
-// except for the start() function where addRubbish is called.
-
-// ... (other Simulation member functions like changeRobotsPosition, orderRobotToGoHome, etc. are omitted for brevity as they are unchanged) ...
-
+// Changes the robot's current position to a new tile ID.
 void Simulation::changeRobotsPosition(size_t newPositionId) {
     robot.setPosition(newPositionId);
     std::cout << "Robot's position successfully changed to Tile ID: " << newPositionId << ".\n";
     const Tile* currentTile = map.getTile(newPositionId);
     if (currentTile) {
-        updateRobotMemory(newPositionId, currentTile);
+        updateRobotMemory(newPositionId, currentTile); // Update robot's memory of the new tile
     }
     else {
         std::cerr << "Warning: Could not retrieve actual tile for ID " << newPositionId << " to update robot memory.\n";
     }
 }
 
+// Orders the robot to go back to its home (charger) position.
 void Simulation::orderRobotToGoHome() {
     robot.orderToGoHome();
     std::cout << "Robot ordered to go home.\n";
 }
 
+// Orders the robot to move to a specific target tile ID.
 void Simulation::orderRobotToMove(size_t targetTileId) {
     if (robot.orderToMove(targetTileId)) {
         std::cout << "Robot ordered to move to Tile ID: " << targetTileId << ".\n";
@@ -152,6 +147,7 @@ void Simulation::orderRobotToMove(size_t targetTileId) {
     }
 }
 
+// Orders the robot to clean a specific tile ID with a given radius.
 void Simulation::orderRobotToClean(size_t tileId, unsigned int radius) {
     if (robot.orderToClean(tileId, radius)) {
         std::cout << "Robot ordered to clean Tile ID: " << tileId << " with radius: " << radius << ".\n";
@@ -161,11 +157,19 @@ void Simulation::orderRobotToClean(size_t tileId, unsigned int radius) {
     }
 }
 
+// Orders the robot to clean efficiently (calls robot's internal efficient cleaning logic).
+void Simulation::orderRobotToCleanEfficiently() {
+    robot.orderToCleanEfficiently();
+    std::cout << "Robot ordered to clean efficiently (based on current position).\n";
+}
+
+// Resets the robot's memory of the map.
 void Simulation::resetRobotMemory() {
     robot.resetMemory();
     std::cout << "Robot's memory successfully reset.\n";
 }
 
+// Saves the current simulation state (map and robot) to a file.
 void Simulation::saveSimulation(fs::path filePath) {
     std::ofstream outFile(filePath);
     if (!outFile.is_open()) {
@@ -174,9 +178,9 @@ void Simulation::saveSimulation(fs::path filePath) {
     }
 
     try {
-        map.saveMap(outFile);
-        outFile << "\n";
-        robot.saveRobot(outFile);
+        map.saveMap(outFile); // Save map data
+        outFile << "\n"; // Separator
+        robot.saveRobot(outFile); // Save robot data
         std::cout << "Simulation state saved successfully to: " << filePath << std::endl;
     }
     catch (const std::exception& e) {
@@ -185,11 +189,13 @@ void Simulation::saveSimulation(fs::path filePath) {
     outFile.close();
 }
 
+// Loads a simulation state from a specified file.
 void Simulation::loadSimulation(fs::path filePath) {
     std::cout << "Action: Loading simulation from file: " << filePath << ".\n";
     loadFromFile(filePath);
 }
 
+// Runs the simulation for a specified number of steps.
 void Simulation::runSimulation(unsigned int steps) {
     if (steps == 0) {
         std::cout << "No steps to run.\n";
@@ -201,6 +207,7 @@ void Simulation::runSimulation(unsigned int steps) {
         std::cout << "\n--- Step " << (i + 1) << " ---\n";
         size_t currentRobotPos = robot.getPosition();
 
+        // Update robot's memory with its current tile and its neighbors
         const Tile* currentTile = map.getTile(currentRobotPos);
         if (currentTile) {
             updateRobotMemory(currentRobotPos, currentTile);
@@ -222,11 +229,11 @@ void Simulation::runSimulation(unsigned int steps) {
                 }
             }
         }
-        std::cout << robot;
+        std::cout << robot; // Print robot's state and its remembered map
 
         std::tuple<RobotAction, Direction> actionResult;
         try {
-            actionResult = robot.makeAction();
+            actionResult = robot.makeAction(); // Robot decides its next action
         }
         catch (const std::exception& e) {
             std::cout << "Robot error: " << e.what() << std::endl;
@@ -245,38 +252,43 @@ void Simulation::runSimulation(unsigned int steps) {
         std::cout << ".\n";
 
         if (action == RobotAction::clean) {
-            cleanTile(robot.getPosition(), robot.getCleaningEfficiency());
+            cleanTile(robot.getPosition(), robot.getCleaningEfficiency()); // Clean the tile if robot decided to clean
         }
     }
     std::cout << "Simulation finished after " << steps << " steps.\n";
 }
 
+// Exits the simulation application.
 void Simulation::exitSimulation() {
     std::cout << "Exiting simulation. Goodbye!\n";
 }
 
+// Prints the current state of the simulation (map and robot).
 void Simulation::printSimulation() {
     std::cout << "\n--- Current Simulation State ---\n";
     std::cout << "Map State:\n";
-    std::cout << map;
+    std::cout << map; // Prints the main map
     std::cout << "\nRobot State:\n";
-    std::cout << robot;
+    std::cout << robot; // Prints the robot's remembered map and state
     std::cout << "--------------------------------\n";
 }
 
+// Updates the robot's internal memory with information about a tile.
 void Simulation::updateRobotMemory(size_t tileId, const Tile* tileObj) {
     robot.exploreTile(tileId, tileObj);
 }
 
+// Cleans a specific tile on the main map with a given efficiency.
 void Simulation::cleanTile(size_t tileId, unsigned int efficiency) {
     std::cout << "Internal: Attempting to clean Tile ID: " << tileId << " with efficiency: " << efficiency << ".\n";
 
     Tile* targetTile = map.getTile(tileId);
 
     if (targetTile) {
+        // Dynamically cast to Floor* to check if it's a cleanable tile
         Floor* floorTile = dynamic_cast<Floor*>(targetTile);
         if (floorTile) {
-            floorTile->getCleaned(efficiency);
+            floorTile->getCleaned(efficiency); // Apply cleaning
             std::cout << "Tile " << tileId << " cleaned. New cleanliness: " << floorTile->getCleanliness() << ".\n";
         }
         else {
@@ -288,7 +300,7 @@ void Simulation::cleanTile(size_t tileId, unsigned int efficiency) {
     }
 }
 
-// --- The start() function (MODIFIED for addRubbish input) ---
+// --- The start() function: Main simulation loop and menu ---
 void Simulation::start(fs::path filePath) {
     clearScreen();
     std::cout << "---------------------------------------------------\n";
@@ -316,7 +328,7 @@ void Simulation::start(fs::path filePath) {
     bool running = true;
     while (running) {
         clearScreen();
-        printSimulation();
+        printSimulation(); // Always show current state at the start of each loop iteration
 
         std::cout << "\n--- Main Menu ---\n";
         std::cout << "1. Add Rubbish to a Tile\n";
@@ -328,6 +340,7 @@ void Simulation::start(fs::path filePath) {
         std::cout << "7. Run Simulation Steps\n";
         std::cout << "8. Save Current Simulation State\n";
         std::cout << "9. Load Simulation from File\n";
+        std::cout << "10. Order Robot to Clean Efficiently (Radius -1)\n"; // NEW MENU OPTION
         std::cout << "0. Exit Simulation\n";
         std::cout << "Enter your choice: ";
 
@@ -336,17 +349,18 @@ void Simulation::start(fs::path filePath) {
 
         if (choiceStr.empty()) {
             // If user just pressed Enter, clear screen and re-prompt immediately
-            continue;
+            continue; // Skip the rest of the loop and start over
         }
 
         int choice;
         std::stringstream ss(choiceStr);
         ss >> choice;
 
-        if (ss.fail() || !ss.eof()) { // Check for parsing failure or extraneous characters
+        // Validate if parsing was successful and no extra characters were left
+        if (ss.fail() || !ss.eof()) {
             std::cout << "Invalid input. Please enter a number from the menu.\n";
             pressEnterToContinue();
-            continue;
+            continue; // Re-prompt
         }
 
         switch (choice) {
@@ -360,7 +374,7 @@ void Simulation::start(fs::path filePath) {
 
             if (input.empty()) { // Handle empty input for add rubbish
                 std::cout << "Input for Tile ID cannot be empty.\n";
-                break; // Exit this case
+                break; // Exit this case and go back to main menu
             }
 
             if (input == "r" || input == "R") {
@@ -454,6 +468,10 @@ void Simulation::start(fs::path filePath) {
             loadSimulation(loadPath);
             break;
         }
+        case 10: { // NEW: Order Robot to Clean Efficiently (Radius -1)
+            orderRobotToCleanEfficiently();
+            break;
+        }
         case 0: { // Exit Simulation
             exitSimulation();
             running = false;
@@ -464,6 +482,7 @@ void Simulation::start(fs::path filePath) {
             break;
         }
 
+        // Only prompt to continue if the simulation is still running
         if (running) {
             pressEnterToContinue();
         }
@@ -472,7 +491,7 @@ void Simulation::start(fs::path filePath) {
     std::cout << "Thank you for playing the Robot Vacuum Cleaner Simulation!\n";
 }
 
-// --- loadFromFile implementation (unchanged from previous) ---
+// --- loadFromFile implementation ---
 void Simulation::loadFromFile(fs::path filePath) {
     std::ifstream inputFile(filePath);
     if (!inputFile.is_open()) {
@@ -485,23 +504,24 @@ void Simulation::loadFromFile(fs::path filePath) {
     std::string line;
     bool readingMap = true;
 
+    // Read file content into stringstreams
     while (std::getline(inputFile, line)) {
         if (readingMap) {
-            if (line.empty()) {
+            if (line.empty()) { // Empty line separates map from robot data
                 readingMap = false;
             }
             else {
-                mapDataStream << line << std::endl;
+                mapDataStream << line << "\n";
             }
         }
         else {
-            robotDataStream << line << std::endl;
+            robotDataStream << line << "\n";
         }
     }
-    inputFile.close();
+    inputFile.close(); // Close the file after reading all content
 
     try {
-        map.loadMap(mapDataStream);
+        map.loadMap(mapDataStream); // Load map data from its stringstream
         std::cout << "Map data loaded successfully." << std::endl;
     }
     catch (const std::exception& e) {
@@ -512,6 +532,7 @@ void Simulation::loadFromFile(fs::path filePath) {
 
     if (robotDataStream.str().empty()) {
         std::cout << "Robot data not found in file. Initializing robot with map dimensions and charger ID.\n";
+        // Initialize robot with default values derived from the loaded map
         robot = Robot(map.getWidth(), map.getHeight(), map.getChargerId());
 
         std::cout << "Robot initialized with: Width=" << map.getWidth()
@@ -520,12 +541,13 @@ void Simulation::loadFromFile(fs::path filePath) {
     }
     else {
         try {
-            robot.loadRobot(robotDataStream);
+            robot.loadRobot(robotDataStream); // Load robot data from its stringstream
             std::cout << "Robot data loaded successfully." << std::endl;
         }
         catch (const std::exception& e) {
             std::cerr << "Error loading robot data: " << e.what() << std::endl;
             std::cerr << "Robot loading failed. Re-initializing robot with map dimensions and charger ID as a fallback.\n";
+            // Fallback: re-initialize robot if loading fails
             robot = Robot(map.getWidth(), map.getHeight(), map.getChargerId());
         }
     }
