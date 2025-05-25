@@ -24,9 +24,9 @@ void clearScreen() {
 
 void pressEnterToContinue() {
     std::cout << "\nPress Enter to continue...";
-    // Consume any leftover newline characters from previous input
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::cin.get(); // Reads the next character, typically the newline left by previous input
+    // Revert to original: Reads the next character, typically the newline left by previous input
+    // The previous std::getline(std::cin, line) in your input functions correctly handles the newline.
+    std::cin.get();
 }
 
 // Function to get validated size_t input from the user
