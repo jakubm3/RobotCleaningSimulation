@@ -375,7 +375,7 @@ void Simulation::runSimulation(unsigned int steps) {
                 // which will then execute the newly ordered task if any.
             }
             else {
-                std::cout << "Simulation finished.\n";
+                std::cout << "Simulation finished after " << steps << " steps.";
                 return;
             }
             break; // Break from switch, continue for loop
@@ -393,7 +393,7 @@ void Simulation::runSimulation(unsigned int steps) {
 
 // Exits the simulation application.
 void Simulation::exitSimulation() {
-    std::cout << "Exiting simulation. Goodbye!\n";
+    std::cout << "Exiting simulation\n";
 }
 
 // Prints the current state of the simulation (map and robot).
