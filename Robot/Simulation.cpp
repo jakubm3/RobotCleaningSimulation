@@ -247,6 +247,25 @@ void Simulation::runSimulation(unsigned int steps) {
         case RobotAction::move: std::cout << "Move"; break;
         case RobotAction::clean: std::cout << "Clean"; break;
         case RobotAction::explore: std::cout << "Explore"; break;
+        case RobotAction::none: { // Handle RobotAction::none
+            std::cout << "None (Robot has completed all known tasks).\n";
+            std::cout << "Robot has completed all known exploration and cleaning tasks.\n";
+            std::cout << "Do you want to order the robot to clean efficiently (y/n)? ";
+            std::string response;
+            std::getline(std::cin, response); // Read user response
+
+            if (!response.empty() && (response[0] == 'y' || response[0] == 'Y')) {
+                robot.orderToCleanEfficiently();
+                std::cout << "Robot ordered to clean efficiently. Continuing simulation.\n";
+                // After ordering, the robot's internal state (currTask, path) might change.
+                // The next iteration of the loop will call makeAction() again,
+                // which will then execute the newly ordered task if any.
+            }
+            else {
+                std::cout << "Efficient cleaning not ordered. Robot will remain idle or continue if new tasks appear.\n";
+            }
+            break; // Break from switch, continue for loop
+        }
         default: std::cout << "Unknown"; break;
         }
         std::cout << ".\n";
