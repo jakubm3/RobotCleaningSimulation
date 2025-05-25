@@ -148,49 +148,69 @@ void Simulation::addSerialRubbish(unsigned int totalRubbishAmount) {
 
     // Use a uniform distribution to pick a random index from the list of floor tile IDs
     std::uniform_int_distribution<size_t> tileIndexDistrib(0, floorTileIds.size() - 1);
-    // Use a uniform distribution for the dirtiness amount to add (1 to 9)
-    std::uniform_int_distribution<unsigned int> dirtinessAmountDistrib(1, 9); // Max dirtiness per single application is 9
+    // This distribution will be created dynamically inside the loop based on remaining capacity
 
-    std::cout << "Action: Attempting to distribute a total of " << totalRubbishAmount << " rubbish points across random tiles (1-9 per tile).\n";
+    std::cout << "Action: Distributing a total of " << totalRubbishAmount << " rubbish points across random floor tiles.\n";
 
-    unsigned int currentRubbishDistributed = 0;
-    const unsigned int maxAttemptsPerRubbishPoint = 100; // Safeguard to prevent infinite loops if map fills
+    unsigned int rubbishPointsDistributed = 0;
+    const unsigned int maxAttemptsToFindTile = 100 * floorTileIds.size(); // Safeguard to prevent infinite loops
 
-    while (currentRubbishDistributed < totalRubbishAmount) {
+    while (rubbishPointsDistributed < totalRubbishAmount) {
         int attempts = 0;
-        bool tileFoundAndDirtied = false;
+        bool tileDirtiedInThisIteration = false;
 
-        while (attempts < maxAttemptsPerRubbishPoint && !tileFoundAndDirtied) {
-            // Pick a random tile ID from the list of floor tiles
-            size_t tileId = floorTileIds[tileIndexDistrib(gen)];
+        while (attempts < maxAttemptsToFindTile && !tileDirtiedInThisIteration) {
+            size_t tileId = floorTileIds[tileIndexDistrib(gen)]; // Pick a random floor tile ID
             Floor* floorTile = dynamic_cast<Floor*>(map.getTile(tileId));
 
             if (floorTile) {
-                unsigned int currentCleanliness = floorTile->getCleanliness();
+                unsigned int currentCleanliness = floorTile->getCleanliness(); // Assuming 0=clean, 9=max dirty
 
-                // If the tile is already at max dirtiness (cleanliness 0), try another tile
-                if (currentCleanliness == 0) {
+                // OMIT TILES THAT ARE ALREADY DIRTINESS 9 (MAXIMALLY DIRTY)
+                if (currentCleanliness == 9) {
                     attempts++;
-                    continue; // Skip to next attempt
+                    continue; // Skip this tile, try another random one
                 }
 
-                unsigned int maxDirtinessCanAdd = currentCleanliness; // If cleanliness is 5, can add 5 more to reach 0
+                // Calculate the maximum dirtiness this tile can still accept.
+                // If cleanliness is 0 (clean), it can accept 9.
+                // If cleanliness is 5, it can accept 4.
+                // If cleanliness is 8, it can accept 1.
+                unsigned int maxDirtinessCanAccept = 9 - currentCleanliness; // This is the UPPER bound for random amount
 
-                // Generate a random dirtiness amount between 1 and 9
-                unsigned int dirtinessToAdd = dirtinessAmountDistrib(gen);
+                // Ensure maxDirtinessCanAccept is at least 1, if it's 0 it means currentCleanliness is 9, already handled above.
+                if (maxDirtinessCanAccept == 0) {
+                    attempts++; // Should theoretically not be needed due to above 'continue'
+                    continue;
+                }
 
-                unsigned int actualDirtiness = std::min({ dirtinessToAdd, maxDirtinessCanAdd, totalRubbishAmount - currentRubbishDistributed });
+                // Create a distribution for the amount of dirtiness to add, from 1 up to maxDirtinessCanAccept.
+                // This is the key change to get the random amount between 1 and (9 - current dirtiness)
+                std::uniform_int_distribution<unsigned int> dirtinessAmountDistrib(1, maxDirtinessCanAccept);
 
-                if (actualDirtiness > 0) { // Only add if there's an actual amount to add
-                    floorTile->getDirty(actualDirtiness);
-                    currentRubbishDistributed += actualDirtiness;
-                    tileFoundAndDirtied = true; // Mark as successful for this dirtiness point
+                // Generate a random amount of dirtiness to try to add
+                unsigned int dirtinessToAttempt = dirtinessAmountDistrib(gen);
+
+                // The actual amount to add is limited by:
+                // 1. The random amount we just generated (dirtinessToAttempt)
+                // 2. The remaining total rubbish points we need to distribute
+                unsigned int actualDirtiness = std::min(dirtinessToAttempt, totalRubbishAmount - rubbishPointsDistributed);
+
+
+                if (actualDirtiness > 0) { // Only proceed if we can actually add some dirtiness
+                    floorTile->getDirty(actualDirtiness); // Add the calculated actualDirtiness
+                    rubbishPointsDistributed += actualDirtiness; // Decrement from total
+                    tileDirtiedInThisIteration = true; // Mark as successful for this loop iteration
 
                     std::cout << "  Added " << actualDirtiness << " rubbish to Tile ID " << tileId
                         << ". New cleanliness: " << floorTile->getCleanliness()
-                        << " (Total distributed: " << currentRubbishDistributed << "/" << totalRubbishAmount << ").\n";
+                        << " (Total distributed: " << rubbishPointsDistributed << "/" << totalRubbishAmount << ").\n";
                 }
                 else {
+                    // This 'else' block means actualDirtiness was 0.
+                    // This can happen if totalRubbishAmount - rubbishPointsDistributed is 0 or less,
+                    // or if dirtinessToAttempt was 0 (which shouldn't happen with the distribution range 1 to X).
+                    // Just try another attempt.
                     attempts++;
                 }
             }
@@ -200,14 +220,14 @@ void Simulation::addSerialRubbish(unsigned int totalRubbishAmount) {
             }
         } // End of inner while (attempts)
 
-        if (!tileFoundAndDirtied) {
-            std::cerr << "Warning: Could not find suitable tile to add remaining "
-                << (totalRubbishAmount - currentRubbishDistributed)
-                << " rubbish points after " << maxAttemptsPerRubbishPoint << " attempts. Map might be full or too few floor tiles.\n";
-            break; // Exit the main loop if stuck
+        if (!tileDirtiedInThisIteration) {
+            std::cerr << "Warning: Could not find a suitable floor tile to add remaining "
+                << (totalRubbishAmount - rubbishPointsDistributed)
+                << " rubbish points after " << attempts << " attempts. All available floor tiles might be fully dirty or an unexpected error occurred.\n";
+            break; // Exit the main loop if we couldn't find a valid tile
         }
     }
-    std::cout << "Successfully distributed " << currentRubbishDistributed << " rubbish points in total.\n";
+    std::cout << "Successfully distributed " << rubbishPointsDistributed << " rubbish points in total.\n";
 }
 
 
