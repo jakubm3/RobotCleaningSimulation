@@ -528,26 +528,25 @@ void replaceCharAtIndex(std::string& mapStr, size_t index1D, char newChar, size_
 }
 
 std::ostream& operator<<(std::ostream& os, const Robot& robot) {
+	if (robot.map.getSize() == 0) {
+		os << "No robot memory.\n";
+		return os;
+	}
+
 	os << "\n";
 
-	// Check if the robot's memory map has any data
-	if (robot.map.getSize() == 0) { // Assuming MemoryMap has a getSize() method
-		os << "No robot memory.\n";
-	}
-	else {
-		std::ostringstream oss;
-		oss << robot.map; // This calls operator<< for MemoryMap
-		std::string mapStr = oss.str();
+	std::ostringstream oss;
+	oss << robot.map; // This calls operator<< for MemoryMap
+	std::string mapStr = oss.str();
 
-		// Place 'R' for robot's current position on its remembered map
-		replaceCharAtIndex(mapStr, robot.position_, 'R', robot.map.getWidth());
+	// Place 'R' for robot's current position on its remembered map
+	replaceCharAtIndex(mapStr, robot.position_, 'R', robot.map.getWidth());
 
-		// If robot has a path, place 'X' for the destination
-		if (!robot.path.empty()) {
-			replaceCharAtIndex(mapStr, robot.path.back(), 'X', robot.map.getWidth());
-		}
-		os << mapStr;
+	// If robot has a path, place 'X' for the destination
+	if (!robot.path.empty()) {
+		replaceCharAtIndex(mapStr, robot.path.back(), 'X', robot.map.getWidth());
 	}
+	os << mapStr;
 
 	os << "\n";
 	os << "Current objective: ";
