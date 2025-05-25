@@ -24,8 +24,6 @@ void clearScreen() {
 
 void pressEnterToContinue() {
     std::cout << "\nPress Enter to continue...";
-    // Revert to original: Reads the next character, typically the newline left by previous input
-    // The previous std::getline(std::cin, line) in your input functions correctly handles the newline.
     std::cin.get();
 }
 
@@ -306,10 +304,7 @@ void Simulation::runSimulation(unsigned int steps) {
 
             if (!response.empty() && (response[0] == 'y' || response[0] == 'Y')) {
                 robot.orderToCleanEfficiently();
-                std::cout << "Robot ordered to clean efficiently. Continuing simulation.\n";
-                // After ordering, the robot's internal state (currTask, path) might change.
-                // The next iteration of the loop will call makeAction() again,
-                // which will then execute the newly ordered task if any.
+                std::cout << "Continuing simulation.\n";
             }
             else {
                 std::cout << "Simulation finished.\n";
