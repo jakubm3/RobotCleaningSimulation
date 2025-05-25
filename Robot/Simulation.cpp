@@ -195,13 +195,23 @@ void Simulation::loadSimulation(fs::path filePath) {
     loadFromFile(filePath);
 }
 
-// Runs the simulation for a specified number of steps.
+-- -
+## `runSimulation` Function Changes
+
+This function now includes a flag `efficientCleanPromptedThisRun` to ensure the "clean efficiently" prompt appears only once.If the user declines this prompt, the simulation will terminate early.
+
+-- -
+
+```cpp
 void Simulation::runSimulation(unsigned int steps) {
     if (steps == 0) {
         std::cout << "No steps to run.\n";
         return;
     }
     std::cout << "Action: Running simulation for " << steps << " steps...\n";
+
+    // Flag to ensure the efficient clean prompt only happens once per runSimulation call
+    bool efficientCleanPromptedThisRun = false;
 
     for (unsigned int i = 0; i < steps; ++i) {
         std::cout << "\n--- Step " << (i + 1) << " ---\n";
@@ -214,7 +224,7 @@ void Simulation::runSimulation(unsigned int steps) {
         }
         else {
             std::cerr << "Error: Robot at invalid position " << currentRobotPos << " or tile not found on main map. Stopping simulation.\n";
-            break;
+            return; // Exit function immediately on error
         }
 
         Direction directions[] = { Direction::up, Direction::down, Direction::left, Direction::right };
@@ -238,7 +248,7 @@ void Simulation::runSimulation(unsigned int steps) {
         catch (const std::exception& e) {
             std::cout << "Robot error: " << e.what() << std::endl;
             std::cout << "Simulation finished prematurely after " << (i + 1) << " steps due to robot error.\n";
-            return;
+            return; // Exit function immediately on robot error
         }
         RobotAction action = std::get<0>(actionResult);
 
@@ -247,24 +257,37 @@ void Simulation::runSimulation(unsigned int steps) {
         case RobotAction::move: std::cout << "Move"; break;
         case RobotAction::clean: std::cout << "Clean"; break;
         case RobotAction::explore: std::cout << "Explore"; break;
-        case RobotAction::none: { // Handle RobotAction::none
+        case RobotAction::none: {
             std::cout << "None (Robot has completed all known tasks).\n";
-            std::cout << "Robot has completed all known exploration and cleaning tasks.\n";
-            std::cout << "Do you want to order the robot to clean efficiently (y/n)? ";
-            std::string response;
-            std::getline(std::cin, response); // Read user response
+            // Only prompt if we haven't already done so in this run
+            if (!efficientCleanPromptedThisRun) {
+                std::cout << "Robot has completed all known exploration and cleaning tasks.\n";
+                std::cout << "Do you want to order the robot to clean efficiently (y/n)? ";
+                std::string response;
+                std::getline(std::cin, response); // Read user response
 
-            if (!response.empty() && (response[0] == 'y' || response[0] == 'Y')) {
-                robot.orderToCleanEfficiently();
-                std::cout << "Robot ordered to clean efficiently. Continuing simulation.\n";
-                // After ordering, the robot's internal state (currTask, path) might change.
-                // The next iteration of the loop will call makeAction() again,
-                // which will then execute the newly ordered task if any.
+                efficientCleanPromptedThisRun = true; // Mark as prompted for this run
+
+                if (!response.empty() && (response[0] == 'y' || response[0] == 'Y')) {
+                    robot.orderToCleanEfficiently();
+                    std::cout << "Robot ordered to clean efficiently. Continuing simulation.\n";
+                }
+                else {
+                    // User declined efficient cleaning, so end simulation
+                    std::cout << "Efficient cleaning not ordered.\n";
+                    std::cout << "Simulation ending after " << (i + 1) << " steps.\n";
+                    return; // Terminate runSimulation immediately
+                }
             }
             else {
-                std::cout << "Efficient cleaning not ordered. Robot will remain idle or continue if new tasks appear.\n";
+                // If already prompted and either user accepted (and robot still has no tasks)
+                // or user declined (which would have already ended the simulation in the previous block),
+                // it means there's truly nothing left for the robot to do.
+                std::cout << "Robot still has no further tasks. Simulation ending.\n";
+                std::cout << "Simulation ending after " << (i + 1) << " steps.\n";
+                return; // Terminate runSimulation immediately
             }
-            break; // Break from switch, continue for loop
+            break; // Break from switch, continue for loop if not returned
         }
         default: std::cout << "Unknown"; break;
         }
@@ -274,15 +297,21 @@ void Simulation::runSimulation(unsigned int steps) {
             cleanTile(robot.getPosition(), robot.getCleaningEfficiency()); // Clean the tile if robot decided to clean
         }
     }
-    std::cout << "Simulation finished after " << steps << " steps.\n";
+    std::cout << "Simulation finished after " << steps << " steps.\n"; // This line is reached if all planned steps are completed
 }
 
-// Exits the simulation application.
+-- -
+## Rest of the `Simulation.cpp`
+
+The rest of the file remains the same as previously provided, including the `exitSimulation`, `printSimulation`, `updateRobotMemory`, `cleanTile`, `start`, and `loadFromFile` functions.
+
+-- -
+
+```cpp
 void Simulation::exitSimulation() {
     std::cout << "Exiting simulation. Goodbye!\n";
 }
 
-// Prints the current state of the simulation (map and robot).
 void Simulation::printSimulation() {
     std::cout << "\n--- Current Simulation State ---\n";
     std::cout << "Map State:\n";
@@ -292,12 +321,10 @@ void Simulation::printSimulation() {
     std::cout << "--------------------------------\n";
 }
 
-// Updates the robot's internal memory with information about a tile.
 void Simulation::updateRobotMemory(size_t tileId, const Tile* tileObj) {
     robot.exploreTile(tileId, tileObj);
 }
 
-// Cleans a specific tile on the main map with a given efficiency.
 void Simulation::cleanTile(size_t tileId, unsigned int efficiency) {
     std::cout << "Internal: Attempting to clean Tile ID: " << tileId << " with efficiency: " << efficiency << ".\n";
 
