@@ -9,6 +9,8 @@
 #include <chrono>     // For seeding random number generator
 #include <optional>   // For optional return types
 #include <tuple>      // For std::tuple (assuming Robot::makeAction returns a tuple)
+#include <vector>     // For std::vector
+#include <algorithm>  // For std::shuffle
 
 // Static random device and generator for random tile selection
 static std::mt19937 gen(std::chrono::system_clock::now().time_since_epoch().count());
@@ -24,6 +26,7 @@ void clearScreen() {
 
 void pressEnterToContinue() {
     std::cout << "\nPress Enter to continue...";
+    // No need for std::cin.ignore here if all previous inputs use std::getline
     std::cin.get();
 }
 
@@ -119,47 +122,52 @@ void Simulation::addRubbish(size_t tileId, unsigned int dirtiness) {
     }
 }
 
-// NEW: Method to add a specified number of rubbish points randomly on the map.
-void Simulation::addSerialRubbish(unsigned int numberOfRubbishPoints, unsigned int maxDirtiness) {
+// NEW: Method to add a specified number of rubbish points randomly on the map to *distinct* tiles.
+// NEW: Method to add a specified number of rubbish points randomly on the map to *distinct* tiles.
+void Simulation::addSerialRubbish(unsigned int numberOfRubbishPoints) { // maxDirtiness parameter removed
     if (map.getSize() == 0) {
         std::cerr << "Error: Map is empty, cannot add serial rubbish.\n";
         return;
     }
-    if (maxDirtiness == 0) {
-        std::cerr << "Error: Maximum dirtiness level cannot be zero.\n";
+
+    std::vector<size_t> floorTileIds;
+    // Collect all Floor tile IDs
+    for (size_t i = 0; i < map.getSize(); ++i) {
+        Tile* currentTile = map.getTile(i);
+        if (currentTile && dynamic_cast<Floor*>(currentTile)) {
+            floorTileIds.push_back(i);
+        }
+    }
+
+    if (floorTileIds.empty()) {
+        std::cerr << "Error: No Floor tiles found on the map to add rubbish.\n";
         return;
     }
 
-    std::cout << "Action: Attempting to add " << numberOfRubbishPoints << " rubbish points randomly with max dirtiness " << maxDirtiness << ".\n";
+    // Ensure we don't try to add more rubbish points than there are available floor tiles
+    if (numberOfRubbishPoints > floorTileIds.size()) {
+        std::cout << "Warning: Requested " << numberOfRubbishPoints
+            << " rubbish points, but only " << floorTileIds.size()
+            << " unique Floor tiles are available. Adding rubbish to all available Floor tiles.\n";
+        numberOfRubbishPoints = static_cast<unsigned int>(floorTileIds.size());
+    }
 
-    std::uniform_int_distribution<size_t> tileIdDistrib(0, map.getSize() - 1);
-    std::uniform_int_distribution<unsigned int> dirtinessDistrib(1, maxDirtiness); // Dirtiness starts from 1
+    // Shuffle the list of floor tile IDs to pick random unique ones
+    std::shuffle(floorTileIds.begin(), floorTileIds.end(), gen);
+
+    std::cout << "Action: Attempting to add " << numberOfRubbishPoints << " rubbish points randomly with dirtiness 1.\n";
 
     unsigned int successfulAdditions = 0;
-    const size_t maxAttemptsPerPoint = map.getSize(); // Max attempts to find a Floor tile for each rubbish point
 
+    // Iterate through the shuffled list and add rubbish to the first 'numberOfRubbishPoints' tiles
     for (unsigned int i = 0; i < numberOfRubbishPoints; ++i) {
-        size_t attempts = 0;
-        bool pointAdded = false;
+        size_t tileId = floorTileIds[i]; // Get a unique random floor tile ID
+        Floor* floorTile = dynamic_cast<Floor*>(map.getTile(tileId)); // Should always succeed based on how floorTileIds was populated
 
-        while (attempts < maxAttemptsPerPoint && !pointAdded) {
-            size_t randomTileId = tileIdDistrib(gen);
-            Tile* targetTile = map.getTile(randomTileId);
-
-            if (targetTile) {
-                Floor* floorTile = dynamic_cast<Floor*>(targetTile);
-                if (floorTile) {
-                    unsigned int dirtiness = dirtinessDistrib(gen);
-                    floorTile->getDirty(dirtiness);
-                    std::cout << "  Added " << dirtiness << " rubbish to Tile ID " << randomTileId << ". New cleanliness: " << floorTile->getCleanliness() << ".\n";
-                    successfulAdditions++;
-                    pointAdded = true; // Mark as added, move to next point
-                }
-            }
-            attempts++;
-        }
-        if (!pointAdded) {
-            std::cerr << "Warning: Could not find a suitable Floor tile for rubbish point " << (i + 1) << " after " << maxAttemptsPerPoint << " attempts. Skipping this point.\n";
+        if (floorTile) { // Double check, though it should be a Floor tile
+            floorTile->getDirty(1); // Always add 1 dirtiness
+            std::cout << "  Added 1 rubbish to Tile ID " << tileId << ". New cleanliness: " << floorTile->getCleanliness() << ".\n";
+            successfulAdditions++;
         }
     }
     std::cout << "Successfully added " << successfulAdditions << " rubbish points in total.\n";
@@ -304,7 +312,10 @@ void Simulation::runSimulation(unsigned int steps) {
 
             if (!response.empty() && (response[0] == 'y' || response[0] == 'Y')) {
                 robot.orderToCleanEfficiently();
-                std::cout << "Continuing simulation.\n";
+                std::cout << "Robot ordered to clean efficiently. Continuing simulation.\n";
+                // After ordering, the robot's internal state (currTask, path) might change.
+                // The next iteration of the loop will call makeAction() again,
+                // which will then execute the newly ordered task if any.
             }
             else {
                 std::cout << "Simulation finished.\n";
@@ -498,7 +509,7 @@ void Simulation::start(fs::path filePath) {
         case 2: { // NEW: Add Rubbish to Multiple Random Tiles (serial)
             unsigned int numPoints = getValidatedUnsignedIntInput("Enter number of rubbish points to add: ");
             unsigned int maxDirtiness = getValidatedUnsignedIntInput("Enter maximum dirtiness level for each point (e.g., 1-9): ");
-            addSerialRubbish(numPoints, maxDirtiness);
+            addSerialRubbish(numPoints);
             break;
         }
         case 3: { // Change Robot's Position (shifted from 2)

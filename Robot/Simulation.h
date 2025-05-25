@@ -31,7 +31,8 @@ private:
     // Simulation options
     void addRubbish(size_t tileId, unsigned int dirtiness);
     // NEW METHOD DECLARATION
-    void addSerialRubbish(unsigned int numberOfRubbishPoints, unsigned int maxDirtiness);
+    // In Simulation.h (modified)
+    void addSerialRubbish(unsigned int numberOfRubbishPoints);
 
     void changeRobotsPosition(size_t newPositionId); // Assuming robot moves to a tile ID
     void orderRobotToGoHome(); // No parameters needed
