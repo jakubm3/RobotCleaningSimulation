@@ -437,35 +437,101 @@ void Simulation::cleanTile(size_t tileId, unsigned int efficiency) {
 void Simulation::start(fs::path filePath) {
     clearScreen();
     std::cout << "---------------------------------------------------\n";
-    std::cout << "          WELCOME TO THE ROBOT VACUUM CLEANER        \n";
-    std::cout << "                SIMULATION GAME!                   \n";
+    std::cout << "           WELCOME TO THE ROBOT VACUUM CLEANER        \n";
+    std::cout << "                 SIMULATION GAME!                   \n";
     std::cout << "---------------------------------------------------\n";
     std::cout << "\n";
 
+    // Flag to track if a simulation state (including map) is loaded and valid
+    bool simulationReady = false;
+
+    // --- Part 1: Handle initial file path argument if provided ---
     if (!filePath.empty()) {
         std::cout << "Attempting to load initial simulation data from: " << filePath << std::endl;
-        loadFromFile(filePath);
-        if (isSimulationValid()) {
+        loadFromFile(filePath); // Call loadFromFile (void return)
+
+        if (isSimulationValid()) { // Then check validity (bool return)
             std::cout << "Initial simulation state loaded and validated.\n";
+            simulationReady = true; // Set flag if valid
         }
         else {
-            std::cerr << "Initial simulation state is invalid. Proceeding with caution or resetting.\n";
+            std::cerr << "Initial simulation state is invalid or failed to load from '" << filePath << "'.\n";
+            std::cerr << "Please load a valid simulation file to proceed.\n";
+            // simulationReady remains false
         }
         pressEnterToContinue();
     }
     else {
-        std::cout << "Starting new simulation (no file loaded).\n";
+        std::cout << "Starting new simulation (no file loaded initially).\n";
         pressEnterToContinue();
     }
 
+    // --- Part 2: Initial menu if no valid simulation is loaded yet ---
+    if (!simulationReady) {
+        bool initialMenuLoop = true;
+        while (initialMenuLoop) {
+            clearScreen(); // Clear screen for initial menu
+            std::cout << "\n--- Initial Setup ---\n";
+            std::cout << "1. Load Simulation from file\n";
+            std::cout << "0. Exit Simulation\n";
+            std::cout << "Enter your choice: ";
+
+            std::string choiceStr;
+            std::getline(std::cin, choiceStr);
+
+            if (choiceStr.empty()) {
+                continue; // Re-prompt if empty input
+            }
+
+            int choice;
+            std::stringstream ss(choiceStr);
+            ss >> choice;
+
+            // Input validation for initial menu
+            if (ss.fail() || !ss.eof() || (choice != 1 && choice != 0)) {
+                std::cout << "Invalid input. Please enter 1 to Load Simulation or 0 to Exit.\n";
+                pressEnterToContinue();
+                continue;
+            }
+
+            switch (choice) {
+            case 1: {
+                fs::path loadPath = getFilePathInput("Enter simulation file name (e.g., my_sim.txt): ");
+                loadFromFile(loadPath); // Call loadFromFile (void return)
+
+                if (isSimulationValid()) { // Then check validity (bool return)
+                    std::cout << "Simulation loaded successfully from '" << loadPath << "'!\n";
+                    simulationReady = true;    // Simulation is now ready
+                    initialMenuLoop = false;   // Exit initial setup loop
+                }
+                else {
+                    std::cerr << "Failed to load simulation from '" << loadPath << "' or loaded state is invalid. Please try again.\n";
+                    // simulationReady remains false, initialMenuLoop remains true to re-prompt
+                }
+                pressEnterToContinue(); // Pause before re-showing initial menu or proceeding
+                break;
+            }
+            case 0:
+                // If user exits from initial menu, immediately exit the start function
+                std::cout << "Exiting simulation. Goodbye!\n";
+                return; // Exit start() directly
+            default:
+                // Should not be reached due to validation
+                break;
+            }
+        }
+    }
+
+    // --- Part 3: Main simulation loop (only accessible if simulationReady is true) ---
+    // If we reach here, a simulation is definitely loaded and valid (either via filePath or initial menu)
     bool running = true;
     while (running) {
         clearScreen();
         printSimulation(); // Always show current state at the start of each loop iteration
 
         std::cout << "\n--- Main Menu ---\n";
-        std::cout << "1. Add Rubbish to a Tile (single)\n"; // Renamed for clarity
-        std::cout << "2. Add Rubbish to Multiple Random Tiles (serial)\n"; // NEW MENU OPTION
+        std::cout << "1. Add Rubbish to a Tile (single)\n";
+        std::cout << "2. Add Rubbish to Multiple Random Tiles (serial)\n";
         std::cout << "3. Change Robot's Position\n";
         std::cout << "4. Order Robot to Go Home\n";
         std::cout << "5. Order Robot to Move to a Tile\n";
@@ -473,142 +539,177 @@ void Simulation::start(fs::path filePath) {
         std::cout << "7. Reset Robot's Memory\n";
         std::cout << "8. Run Simulation Steps\n";
         std::cout << "9. Save Current Simulation State\n";
-        std::cout << "10. Load Simulation from File\n";
+        std::cout << "10. Load Simulation from File\n"; // This re-loads the entire state
         std::cout << "11. Order Robot to Clean Efficiently\n";
         std::cout << "0. Exit Simulation\n";
         std::cout << "Enter your choice: ";
 
         std::string choiceStr;
-        std::getline(std::cin, choiceStr); // Read the whole line for the menu choice
+        std::getline(std::cin, choiceStr);
 
         if (choiceStr.empty()) {
-            // If user just pressed Enter, clear screen and re-prompt immediately
-            continue; // Skip the rest of the loop and start over
+            continue;
         }
 
         int choice;
         std::stringstream ss(choiceStr);
         ss >> choice;
 
-        // Validate if parsing was successful and no extra characters were left
         if (ss.fail() || !ss.eof()) {
             std::cout << "Invalid input. Please enter a number from the menu.\n";
             pressEnterToContinue();
-            continue; // Re-prompt
+            continue;
         }
 
         switch (choice) {
         case 1: { // Add Rubbish (single)
             std::string input;
             size_t tileId;
-            bool foundFloorTile = false; // Flag to indicate if a Floor tile was found
+            bool foundValidTile = false;
 
             std::cout << "Enter Tile ID to add rubbish to (or 'r' for random Floor tile): ";
-            std::getline(std::cin, input); // Use getline to read whole line, allows "r"
+            std::getline(std::cin, input);
 
-            if (input.empty()) { // Handle empty input for add rubbish
+            if (input.empty()) {
                 std::cout << "Input for Tile ID cannot be empty.\n";
-                break; // Exit this case and go back to main menu
+                break;
             }
 
             if (input == "r" || input == "R") {
-                if (map.getSize() == 0) {
+                if (map.getSize() == 0) { // Using 'map' directly as it's a member
                     std::cerr << "Error: Map is empty, cannot add rubbish to a random tile.\n";
-                    break; // Exit this case
+                    break;
                 }
 
-                // Loop to find a random Floor tile
-                std::uniform_int_distribution<size_t> distrib(0, map.getSize() - 1);
-                const int maxAttempts = 100; // Safeguard: max attempts to find a floor tile
+                std::vector<size_t> floorTileIds;
+                for (size_t i = 0; i < map.getSize(); ++i) {
+                    if (dynamic_cast<Floor*>(map.getTile(i))) {
+                        floorTileIds.push_back(i);
+                    }
+                }
+
+                if (floorTileIds.empty()) {
+                    std::cerr << "Error: No Floor tiles found on the map.\n";
+                    break;
+                }
+
+                std::uniform_int_distribution<size_t> distrib(0, floorTileIds.size() - 1);
+                const int maxAttempts = 100 * floorTileIds.size();
                 int attempts = 0;
 
-                while (!foundFloorTile && attempts < maxAttempts) {
-                    tileId = distrib(gen); // Generate random ID
-                    Tile* targetTile = map.getTile(tileId);
+                while (!foundValidTile && attempts < maxAttempts) {
+                    size_t randomIndex = distrib(gen); // Assuming 'gen' is accessible
+                    tileId = floorTileIds[randomIndex];
+                    Floor* floorTile = dynamic_cast<Floor*>(map.getTile(tileId));
 
-                    if (targetTile) {
-                        Floor* floorTile = dynamic_cast<Floor*>(targetTile);
-                        if (floorTile) {
-                            foundFloorTile = true; // Found a Floor tile!
-                        }
+                    if (floorTile && floorTile->getCleanliness() < 9) { // Only pick if not max dirty (cleanliness 9)
+                        foundValidTile = true;
                     }
                     attempts++;
                 }
 
-                if (foundFloorTile) {
+                if (foundValidTile) {
                     std::cout << "Selected random Floor Tile ID: " << tileId << ".\n";
                 }
                 else {
-                    std::cerr << "Could not find a random Floor tile after " << maxAttempts << " attempts. Please check map configuration.\n";
-                    break; // Exit this case if no Floor tile found
+                    std::cerr << "Could not find a cleanable random Floor tile after " << maxAttempts << " attempts. All floor tiles might be fully dirty.\n";
+                    break;
                 }
 
             }
             else { // User entered a specific tile ID
                 try {
-                    tileId = std::stoul(input); // Convert string to size_t
-                    // Validate if it's a Floor tile if user explicitly entered an ID
+                    tileId = std::stoul(input);
                     Tile* targetTile = map.getTile(tileId);
                     if (!targetTile || !dynamic_cast<Floor*>(targetTile)) {
                         std::cerr << "Invalid input: Tile ID " << tileId << " is not a valid Floor tile or does not exist.\n";
-                        break; // Exit this case
+                        break;
                     }
+                    if (dynamic_cast<Floor*>(targetTile)->getCleanliness() == 9) { // Check if it's already max dirty
+                        std::cerr << "Tile ID " << tileId << " is already at maximum dirtiness (9). Cannot add more rubbish.\n";
+                        break;
+                    }
+                    foundValidTile = true;
                 }
                 catch (const std::exception& e) {
                     std::cerr << "Invalid input for Tile ID. Please enter a valid number or 'r'.\n";
-                    break; // Exit this case
+                    break;
                 }
             }
-            unsigned int dirtiness = getValidatedUnsignedIntInput("Enter dirtiness level (e.g., 1-9): ");
-            addRubbish(tileId, dirtiness); // Call the existing addRubbish with the determined tileId
+
+            if (foundValidTile) {
+                unsigned int dirtiness = getValidatedUnsignedIntInput("Enter dirtiness level (e.g., 1-9): ");
+                Floor* floorTile = dynamic_cast<Floor*>(map.getTile(tileId));
+                unsigned int maxAddable = 9 - floorTile->getCleanliness(); // Assuming 0=clean, 9=max dirty
+                if (dirtiness > maxAddable) {
+                    std::cout << "Warning: Requested dirtiness " << dirtiness << " exceeds tile capacity. Adding " << maxAddable << " instead.\n";
+                    dirtiness = maxAddable;
+                }
+                if (dirtiness > 0) {
+                    addRubbish(tileId, dirtiness); // Call your existing addRubbish
+                }
+                else {
+                    std::cout << "Tile already at maximum dirtiness or no dirtiness requested.\n";
+                }
+            }
             break;
         }
-        case 2: { // NEW: Add Rubbish to Multiple Random Tiles (serial)
-            unsigned int numPoints = getValidatedUnsignedIntInput("Enter number of rubbish points to add: ");
-            
-            addSerialRubbish(numPoints);
+        case 2: { // Add Rubbish to Multiple Random Tiles (serial)
+            unsigned int totalRubbishAmount = getValidatedUnsignedIntInput("Enter TOTAL amount of rubbish points to distribute: ");
+            addSerialRubbish(totalRubbishAmount); // Call your existing addSerialRubbish
             break;
         }
-        case 3: { // Change Robot's Position (shifted from 2)
+        case 3: { // Change Robot's Position
             size_t newPositionId = getValidatedSizeTInput("Enter new Tile ID for robot's position: ");
             changeRobotsPosition(newPositionId);
             break;
         }
-        case 4: { // Order Robot to Go Home (shifted from 3)
+        case 4: { // Order Robot to Go Home
             orderRobotToGoHome();
             break;
         }
-        case 5: { // Order Robot to Move (shifted from 4)
+        case 5: { // Order Robot to Move
             size_t targetTileId = getValidatedSizeTInput("Enter target Tile ID for robot to move: ");
             orderRobotToMove(targetTileId);
             break;
         }
-        case 6: { // Order Robot to Clean (shifted from 5)
+        case 6: { // Order Robot to Clean
             size_t tileId = getValidatedSizeTInput("Enter Tile ID for robot to clean: ");
             unsigned int radius = getValidatedUnsignedIntInput("Enter cleaning radius: ");
             orderRobotToClean(tileId, radius);
             break;
         }
-        case 7: { // Reset Robot's Memory (shifted from 6)
+        case 7: { // Reset Robot's Memory
             resetRobotMemory();
             break;
         }
-        case 8: { // Run Simulation Steps (shifted from 7)
+        case 8: { // Run Simulation Steps
             unsigned int steps = getValidatedUnsignedIntInput("Enter number of simulation steps to run: ");
             runSimulation(steps);
             break;
         }
-        case 9: { // Save Simulation (shifted from 8)
+        case 9: { // Save Simulation
             fs::path savePath = getFilePathInput("Enter filename to save simulation (e.g., my_sim.txt): ");
             saveSimulation(savePath);
             break;
         }
-        case 10: { // Load Simulation (shifted from 9)
+        case 10: { // Load Simulation from File (this re-loads the entire state)
             fs::path loadPath = getFilePathInput("Enter filename to load simulation from (e.g., other_sim.txt): ");
-            loadSimulation(loadPath);
+            loadSimulation(loadPath); // Call loadSimulation (void return)
+
+            if (isSimulationValid()) { // Then check validity (bool return)
+                std::cout << "Simulation loaded successfully from '" << loadPath << "'.\n";
+                simulationReady = true; // Ensure flag is true after successful load
+            }
+            else {
+                std::cerr << "Failed to load simulation from '" << loadPath << "' or loaded state is invalid.\n";
+                // If loading fails from here, the current state remains; simulationReady might be false.
+                // Decide if you want to force a return to the initial menu here if load fails.
+                // For now, it stays in the main menu.
+            }
             break;
         }
-        case 11: { // Order Robot to Clean Efficiently (shifted from 10)
+        case 11: { // Order Robot to Clean Efficiently
             orderRobotToCleanEfficiently();
             break;
         }
@@ -622,7 +723,6 @@ void Simulation::start(fs::path filePath) {
             break;
         }
 
-        // Only prompt to continue if the simulation is still running
         if (running) {
             pressEnterToContinue();
         }
