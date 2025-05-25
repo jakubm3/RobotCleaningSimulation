@@ -7,6 +7,7 @@
 #include <sstream>
 #include <random>    // NEW: For random number generation
 #include <chrono>    // NEW: For seeding random number generator (good practice, though not strictly required by problem)
+#include <optional>  // For optional return types
 
 // Static random device and generator for random tile selection
 // NEW: Declaring these globally or as static members in Simulation.cpp
@@ -24,41 +25,56 @@ void clearScreen() {
 // MODIFIED: Simplified to allow one click
 void pressEnterToContinue() {
     std::cout << "\nPress Enter to continue...";
-    // REMOVED: std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     // We now rely on the calling functions (like getValidated... or the main menu loop)
     // to clear the input buffer *before* calling pressEnterToContinue().
     std::cin.get();
 }
 
+// MODIFIED: To handle empty input more robustly
 size_t getValidatedSizeTInput(const std::string& prompt) {
     size_t value;
+    std::string line;
     while (true) {
         std::cout << prompt;
-        std::cin >> value;
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::getline(std::cin, line); // Read the whole line
+
+        if (line.empty()) {
+            std::cout << "Input cannot be empty. Please enter a positive whole number.\n";
+            // No need to clear/ignore here, getline already consumed the line
+            continue; // Re-prompt
+        }
+
+        std::stringstream ss(line);
+        ss >> value;
+        if (ss.fail() || !ss.eof()) { // Check for parsing failure or extraneous characters
             std::cout << "Invalid input. Please enter a positive whole number.\n";
         }
         else {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return value;
         }
     }
 }
 
+// MODIFIED: To handle empty input more robustly
 unsigned int getValidatedUnsignedIntInput(const std::string& prompt) {
     unsigned int value;
+    std::string line;
     while (true) {
         std::cout << prompt;
-        std::cin >> value;
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::getline(std::cin, line); // Read the whole line
+
+        if (line.empty()) {
+            std::cout << "Input cannot be empty. Please enter a positive whole number.\n";
+            // No need to clear/ignore here, getline already consumed the line
+            continue; // Re-prompt
+        }
+
+        std::stringstream ss(line);
+        ss >> value;
+        if (ss.fail() || !ss.eof()) { // Check for parsing failure or extraneous characters
             std::cout << "Invalid input. Please enter a positive whole number.\n";
         }
         else {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return value;
         }
     }
@@ -276,8 +292,8 @@ void Simulation::cleanTile(size_t tileId, unsigned int efficiency) {
 void Simulation::start(fs::path filePath) {
     clearScreen();
     std::cout << "---------------------------------------------------\n";
-    std::cout << "        WELCOME TO THE ROBOT VACUUM CLEANER        \n";
-    std::cout << "              SIMULATION GAME!                     \n";
+    std::cout << "         WELCOME TO THE ROBOT VACUUM CLEANER       \n";
+    std::cout << "               SIMULATION GAME!                    \n";
     std::cout << "---------------------------------------------------\n";
     std::cout << "\n";
 
@@ -315,17 +331,23 @@ void Simulation::start(fs::path filePath) {
         std::cout << "0. Exit Simulation\n";
         std::cout << "Enter your choice: ";
 
-        int choice;
-        std::cin >> choice;
+        std::string choiceStr;
+        std::getline(std::cin, choiceStr); // Read the whole line for the menu choice
 
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input. Please enter a number.\n";
+        if (choiceStr.empty()) {
+            // If user just pressed Enter, clear screen and re-prompt immediately
+            continue;
+        }
+
+        int choice;
+        std::stringstream ss(choiceStr);
+        ss >> choice;
+
+        if (ss.fail() || !ss.eof()) { // Check for parsing failure or extraneous characters
+            std::cout << "Invalid input. Please enter a number from the menu.\n";
             pressEnterToContinue();
             continue;
         }
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear buffer after choice
 
         switch (choice) {
         case 1: { // Add Rubbish
@@ -335,6 +357,11 @@ void Simulation::start(fs::path filePath) {
 
             std::cout << "Enter Tile ID to add rubbish to (or 'r' for random Floor tile): ";
             std::getline(std::cin, input); // Use getline to read whole line, allows "r"
+
+            if (input.empty()) { // Handle empty input for add rubbish
+                std::cout << "Input for Tile ID cannot be empty.\n";
+                break; // Exit this case
+            }
 
             if (input == "r" || input == "R") {
                 if (map.getSize() == 0) {
