@@ -124,7 +124,7 @@ void Simulation::addRubbish(size_t tileId, unsigned int dirtiness) {
 
 // NEW: Method to add a specified number of rubbish points randomly on the map to *distinct* tiles.
 // NEW: Method to add a specified number of rubbish points randomly on the map to *distinct* tiles.
-void Simulation::addSerialRubbish(unsigned int numberOfRubbishPoints) { // maxDirtiness parameter removed
+void Simulation::addSerialRubbish(unsigned int numberOfRubbishPoints) {
     if (map.getSize() == 0) {
         std::cerr << "Error: Map is empty, cannot add serial rubbish.\n";
         return;
@@ -508,7 +508,7 @@ void Simulation::start(fs::path filePath) {
         }
         case 2: { // NEW: Add Rubbish to Multiple Random Tiles (serial)
             unsigned int numPoints = getValidatedUnsignedIntInput("Enter number of rubbish points to add: ");
-            unsigned int maxDirtiness = getValidatedUnsignedIntInput("Enter maximum dirtiness level for each point (e.g., 1-9): ");
+            
             addSerialRubbish(numPoints);
             break;
         }
