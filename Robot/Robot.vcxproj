@@ -142,6 +142,7 @@
     <ClInclude Include="Charger.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Messages.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="Robot.h" />
     <ClInclude Include="Simulation.h" />
