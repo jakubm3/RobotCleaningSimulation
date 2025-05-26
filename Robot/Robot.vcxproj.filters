@@ -68,6 +68,9 @@
     <ClInclude Include="UnVisited.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="Messages.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileManager.hpp">
@@ -76,5 +79,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="exampleSave.txt" />
+    <Text Include="blocked.txt" />
   </ItemGroup>
 </Project>
