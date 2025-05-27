@@ -8,6 +8,6 @@ public:
     // Virtual copy constructor
     std::unique_ptr<Tile> clone() const override;
 
-    // nadpisane metody z klasy bazowej Tile
+    // Nadpisane metody z klasy bazowej Tile
     bool isMoveValid() const override;
 };

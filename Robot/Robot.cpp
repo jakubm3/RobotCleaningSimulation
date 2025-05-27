@@ -450,63 +450,87 @@ void Robot::resetMemory() {
 }
 
 void Robot::loadRobot(std::istream& in) {
-	// 1. Odczytaj map ze strumienia a do pustej linii
 	std::stringstream mapStream;
 	std::string line;
 	while (std::getline(in, line)) {
-		if (line.empty()) break; // pusta linia jako separator
+		if (line.empty()) break;
 		mapStream << line << "\n";
 	}
 	map.loadMap(mapStream);
 
-	// 2. Wczytaj pozycje i ustawienia
 	int currTaskInt;
 	size_t tilesSize = 0;
 	size_t pathSize = 0;
 
-	in >> position_ >> chargerId_;
-	in >> currTaskInt;
-	currTask = static_cast<RobotAction>(currTaskInt);
-	in >> cleaningEfficiency;
+	if (!(in >> position_ >> chargerId_ >> currTaskInt >> cleaningEfficiency)) {
+		throw std::runtime_error("Failed to read robot basic data");
+	}
 
-	// 3. Wczytaj tilesToCheck
-	in >> tilesSize;
+	if (position_ >= map.getSize()) {
+		throw std::runtime_error("Invalid robot position");
+	}
+
+	if (chargerId_ >= map.getSize()) {
+		throw std::runtime_error("Invalid charger ID");
+	}
+
+	if (currTaskInt < 0 || currTaskInt > 3) {
+		throw std::runtime_error("Invalid robot task");
+	}
+	currTask = static_cast<RobotAction>(currTaskInt);
+
+	if (cleaningEfficiency > 9) {
+		throw std::runtime_error("Invalid cleaning efficiency");
+	}
+
+	if (!(in >> tilesSize)) {
+		throw std::runtime_error("Failed to read tilesToCheck size");
+	}
+
+	if (tilesSize != map.getSize()) {
+		throw std::runtime_error("tilesToCheck size doesn't match map size");
+	}
+
 	tilesToCheck.resize(tilesSize);
 	for (size_t i = 0; i < tilesSize; ++i) {
 		bool val;
-		in >> val;
+		if (!(in >> val)) {
+			throw std::runtime_error("Failed to read tilesToCheck data");
+		}
 		tilesToCheck[i] = val;
 	}
 
-	// 4. Wczytaj path
-	in >> pathSize;
+	if (!(in >> pathSize)) {
+		throw std::runtime_error("Failed to read path size");
+	}
+
 	std::queue<size_t> tempQueue;
 	for (size_t i = 0; i < pathSize; ++i) {
 		size_t elem;
-		in >> elem;
+		if (!(in >> elem)) {
+			throw std::runtime_error("Failed to read path element");
+		}
+		if (elem >= map.getSize()) {
+			throw std::runtime_error("Invalid path element");
+		}
 		tempQueue.push(elem);
 	}
 	path = std::move(tempQueue);
 }
 
-
 void Robot::saveRobot(std::ostream& out) const {
-	// 1. Zapisz map
 	map.saveMap(out);
 	out << "\n";
 
-	// 2. Zapisz pozycje i ustawienia
 	out << position_ << ' ' << chargerId_ << ' ';
 	out << static_cast<int>(currTask) << ' ';
 	out << cleaningEfficiency << ' ';
 
-	// 3. Zapisz tilesToCheck
 	out << tilesToCheck.size() << ' ';
 	for (bool b : tilesToCheck) {
 		out << b << ' ';
 	}
 
-	// 4. Zapisz path
 	out << path.size() << ' ';
 	std::queue<size_t> tempQueue = path;
 	while (!tempQueue.empty()) {
@@ -514,7 +538,7 @@ void Robot::saveRobot(std::ostream& out) const {
 		tempQueue.pop();
 	}
 
-	out << "\n"; // kocowy newline dla czytelnoci
+	out << "\n";
 }
 
 void replaceCharAtIndex(std::string& mapStr, size_t index1D, char newChar, size_t width) {

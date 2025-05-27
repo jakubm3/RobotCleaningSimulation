@@ -7,5 +7,5 @@ std::unique_ptr<Tile> UnVisited::clone() const {
 }
 
 bool UnVisited::isMoveValid() const {
-    return true; // Robot może wejść na nieodwiedzony kafelek
+    return false; // Robot cannot move on unvisited tiles until they are explored
 }
