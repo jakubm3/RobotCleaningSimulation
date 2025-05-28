@@ -1,0 +1,19 @@
+MapTest.DefaultConstructor 1 0.00243422
+MapTest.DimensionConstructor 1 0.00236716
+MapTest.StreamConstructorValid 1 0.00218054
+MapTest.StreamConstructorWithObstacles 1 0.00200844
+MapTest.InvalidMaps 1 0.00201105
+MapTest.CopyConstructor 1 0.00191643
+MapTest.CopyAssignment 1 0.00189018
+MapTest.GetIndex 1 0.00189972
+MapTest.GetTile 1 0.00179497
+MapTest.CanMoveOn 1 0.00182295
+MapTest.UpdateTile 1 0.00190061
+MapTest.SaveLoadConsistency 1 0.00179746
+MapTest.MapValidation 1 0.00183563
+MapTest.UnVisitedTiles 1 0.00174905
+MapTest.GetIndexEdgeCases 1 0.00173463
+MapTest.MoveOperationsOnDifferentTiles 1 0.00182006
+MapTest.OutputOperator 1 0.00217694
+MapTests 1 0.00237343
+---
