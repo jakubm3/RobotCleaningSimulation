@@ -2,6 +2,8 @@ file(REMOVE_RECURSE
   "AllTests"
   "AllTests.pdb"
   "AllTests[1]_tests.cmake"
+  "CMakeFiles/AllTests.dir/FileManagerTests.cpp.o"
+  "CMakeFiles/AllTests.dir/FileManagerTests.cpp.o.d"
   "CMakeFiles/AllTests.dir/MapTests.cpp.o"
   "CMakeFiles/AllTests.dir/MapTests.cpp.o.d"
   "CMakeFiles/AllTests.dir/RobotTests.cpp.o"

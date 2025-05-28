@@ -183,6 +183,20 @@ TileTests/fast:
 .PHONY : TileTests/fast
 
 # Convenience name for target.
+tests/CMakeFiles/FileManagerTests.dir/rule:
+	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/FileManagerTests.dir/rule
+.PHONY : tests/CMakeFiles/FileManagerTests.dir/rule
+
+# Convenience name for target.
+FileManagerTests: tests/CMakeFiles/FileManagerTests.dir/rule
+.PHONY : FileManagerTests
+
+# fast build rule for target.
+FileManagerTests/fast:
+	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/FileManagerTests.dir/build.make tests/CMakeFiles/FileManagerTests.dir/build
+.PHONY : FileManagerTests/fast
+
+# Convenience name for target.
 tests/CMakeFiles/AllTests.dir/rule:
 	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/AllTests.dir/rule
 .PHONY : tests/CMakeFiles/AllTests.dir/rule
@@ -195,6 +209,33 @@ AllTests: tests/CMakeFiles/AllTests.dir/rule
 AllTests/fast:
 	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/AllTests.dir/build.make tests/CMakeFiles/AllTests.dir/build
 .PHONY : AllTests/fast
+
+FileManagerTests.o: FileManagerTests.cpp.o
+.PHONY : FileManagerTests.o
+
+# target to build an object file
+FileManagerTests.cpp.o:
+	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/FileManagerTests.dir/build.make tests/CMakeFiles/FileManagerTests.dir/FileManagerTests.cpp.o
+	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/AllTests.dir/build.make tests/CMakeFiles/AllTests.dir/FileManagerTests.cpp.o
+.PHONY : FileManagerTests.cpp.o
+
+FileManagerTests.i: FileManagerTests.cpp.i
+.PHONY : FileManagerTests.i
+
+# target to preprocess a source file
+FileManagerTests.cpp.i:
+	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/FileManagerTests.dir/build.make tests/CMakeFiles/FileManagerTests.dir/FileManagerTests.cpp.i
+	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/AllTests.dir/build.make tests/CMakeFiles/AllTests.dir/FileManagerTests.cpp.i
+.PHONY : FileManagerTests.cpp.i
+
+FileManagerTests.s: FileManagerTests.cpp.s
+.PHONY : FileManagerTests.s
+
+# target to generate assembly for a file
+FileManagerTests.cpp.s:
+	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/FileManagerTests.dir/build.make tests/CMakeFiles/FileManagerTests.dir/FileManagerTests.cpp.s
+	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/AllTests.dir/build.make tests/CMakeFiles/AllTests.dir/FileManagerTests.cpp.s
+.PHONY : FileManagerTests.cpp.s
 
 MapTests.o: MapTests.cpp.o
 .PHONY : MapTests.o
@@ -314,10 +355,14 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... AllTests"
+	@echo "... FileManagerTests"
 	@echo "... MapTests"
 	@echo "... RobotTests"
 	@echo "... SimulationTests"
 	@echo "... TileTests"
+	@echo "... FileManagerTests.o"
+	@echo "... FileManagerTests.i"
+	@echo "... FileManagerTests.s"
 	@echo "... MapTests.o"
 	@echo "... MapTests.i"
 	@echo "... MapTests.s"

@@ -205,6 +205,19 @@ TileTests/fast:
 .PHONY : TileTests/fast
 
 #=============================================================================
+# Target rules for targets named FileManagerTests
+
+# Build rule for target.
+FileManagerTests: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FileManagerTests
+.PHONY : FileManagerTests
+
+# fast build rule for target.
+FileManagerTests/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/FileManagerTests.dir/build.make tests/CMakeFiles/FileManagerTests.dir/build
+.PHONY : FileManagerTests/fast
+
+#=============================================================================
 # Target rules for targets named AllTests
 
 # Build rule for target.
@@ -446,6 +459,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... AllTests"
+	@echo "... FileManagerTests"
 	@echo "... MapTests"
 	@echo "... RobotLib"
 	@echo "... RobotMain"

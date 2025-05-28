@@ -86,6 +86,7 @@ tests/all: tests/CMakeFiles/MapTests.dir/all
 tests/all: tests/CMakeFiles/RobotTests.dir/all
 tests/all: tests/CMakeFiles/SimulationTests.dir/all
 tests/all: tests/CMakeFiles/TileTests.dir/all
+tests/all: tests/CMakeFiles/FileManagerTests.dir/all
 tests/all: tests/CMakeFiles/AllTests.dir/all
 .PHONY : tests/all
 
@@ -98,6 +99,7 @@ tests/clean: tests/CMakeFiles/MapTests.dir/clean
 tests/clean: tests/CMakeFiles/RobotTests.dir/clean
 tests/clean: tests/CMakeFiles/SimulationTests.dir/clean
 tests/clean: tests/CMakeFiles/TileTests.dir/clean
+tests/clean: tests/CMakeFiles/FileManagerTests.dir/clean
 tests/clean: tests/CMakeFiles/AllTests.dir/clean
 .PHONY : tests/clean
 
@@ -108,7 +110,7 @@ tests/clean: tests/CMakeFiles/AllTests.dir/clean
 CMakeFiles/RobotLib.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotLib.dir/build.make CMakeFiles/RobotLib.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotLib.dir/build.make CMakeFiles/RobotLib.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=8,9,10,11,12,13,14,15,16 "Built target RobotLib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=11,12,13,14,15,16,17,18,19 "Built target RobotLib"
 .PHONY : CMakeFiles/RobotLib.dir/all
 
 # Build rule for subdir invocation for target.
@@ -134,7 +136,7 @@ CMakeFiles/RobotLib.dir/clean:
 CMakeFiles/RobotMain.dir/all: CMakeFiles/RobotLib.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotMain.dir/build.make CMakeFiles/RobotMain.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotMain.dir/build.make CMakeFiles/RobotMain.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=17,18,19 "Built target RobotMain"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=20,21,22 "Built target RobotMain"
 .PHONY : CMakeFiles/RobotMain.dir/all
 
 # Build rule for subdir invocation for target.
@@ -160,7 +162,7 @@ CMakeFiles/RobotMain.dir/clean:
 tests/CMakeFiles/MapTests.dir/all: CMakeFiles/RobotLib.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/MapTests.dir/build.make tests/CMakeFiles/MapTests.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/MapTests.dir/build.make tests/CMakeFiles/MapTests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=6,7 "Built target MapTests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=9,10 "Built target MapTests"
 .PHONY : tests/CMakeFiles/MapTests.dir/all
 
 # Build rule for subdir invocation for target.
@@ -186,7 +188,7 @@ tests/CMakeFiles/MapTests.dir/clean:
 tests/CMakeFiles/RobotTests.dir/all: CMakeFiles/RobotLib.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/RobotTests.dir/build.make tests/CMakeFiles/RobotTests.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/RobotTests.dir/build.make tests/CMakeFiles/RobotTests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=20,21 "Built target RobotTests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=23,24 "Built target RobotTests"
 .PHONY : tests/CMakeFiles/RobotTests.dir/all
 
 # Build rule for subdir invocation for target.
@@ -212,7 +214,7 @@ tests/CMakeFiles/RobotTests.dir/clean:
 tests/CMakeFiles/SimulationTests.dir/all: CMakeFiles/RobotLib.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/SimulationTests.dir/build.make tests/CMakeFiles/SimulationTests.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/SimulationTests.dir/build.make tests/CMakeFiles/SimulationTests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=22,23 "Built target SimulationTests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=25,26 "Built target SimulationTests"
 .PHONY : tests/CMakeFiles/SimulationTests.dir/all
 
 # Build rule for subdir invocation for target.
@@ -238,7 +240,7 @@ tests/CMakeFiles/SimulationTests.dir/clean:
 tests/CMakeFiles/TileTests.dir/all: CMakeFiles/RobotLib.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/TileTests.dir/build.make tests/CMakeFiles/TileTests.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/TileTests.dir/build.make tests/CMakeFiles/TileTests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=24,25 "Built target TileTests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=27,28 "Built target TileTests"
 .PHONY : tests/CMakeFiles/TileTests.dir/all
 
 # Build rule for subdir invocation for target.
@@ -258,18 +260,44 @@ tests/CMakeFiles/TileTests.dir/clean:
 .PHONY : tests/CMakeFiles/TileTests.dir/clean
 
 #=============================================================================
+# Target rules for target tests/CMakeFiles/FileManagerTests.dir
+
+# All Build rule for target.
+tests/CMakeFiles/FileManagerTests.dir/all: CMakeFiles/RobotLib.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/FileManagerTests.dir/build.make tests/CMakeFiles/FileManagerTests.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/FileManagerTests.dir/build.make tests/CMakeFiles/FileManagerTests.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=7,8 "Built target FileManagerTests"
+.PHONY : tests/CMakeFiles/FileManagerTests.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/FileManagerTests.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles 11
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/FileManagerTests.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/FileManagerTests.dir/rule
+
+# Convenience name for target.
+FileManagerTests: tests/CMakeFiles/FileManagerTests.dir/rule
+.PHONY : FileManagerTests
+
+# clean rule for target.
+tests/CMakeFiles/FileManagerTests.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/FileManagerTests.dir/build.make tests/CMakeFiles/FileManagerTests.dir/clean
+.PHONY : tests/CMakeFiles/FileManagerTests.dir/clean
+
+#=============================================================================
 # Target rules for target tests/CMakeFiles/AllTests.dir
 
 # All Build rule for target.
 tests/CMakeFiles/AllTests.dir/all: CMakeFiles/RobotLib.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/AllTests.dir/build.make tests/CMakeFiles/AllTests.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/AllTests.dir/build.make tests/CMakeFiles/AllTests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target AllTests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=1,2,3,4,5,6 "Built target AllTests"
 .PHONY : tests/CMakeFiles/AllTests.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/AllTests.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles 14
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles 15
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/AllTests.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles 0
 .PHONY : tests/CMakeFiles/AllTests.dir/rule

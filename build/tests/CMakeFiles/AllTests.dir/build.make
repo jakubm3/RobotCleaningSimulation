@@ -125,12 +125,27 @@ tests/CMakeFiles/AllTests.dir/TileTests.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/AllTests.dir/TileTests.cpp.s"
 	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/tests/TileTests.cpp -o CMakeFiles/AllTests.dir/TileTests.cpp.s
 
+tests/CMakeFiles/AllTests.dir/FileManagerTests.cpp.o: tests/CMakeFiles/AllTests.dir/flags.make
+tests/CMakeFiles/AllTests.dir/FileManagerTests.cpp.o: /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/tests/FileManagerTests.cpp
+tests/CMakeFiles/AllTests.dir/FileManagerTests.cpp.o: tests/CMakeFiles/AllTests.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object tests/CMakeFiles/AllTests.dir/FileManagerTests.cpp.o"
+	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT tests/CMakeFiles/AllTests.dir/FileManagerTests.cpp.o -MF CMakeFiles/AllTests.dir/FileManagerTests.cpp.o.d -o CMakeFiles/AllTests.dir/FileManagerTests.cpp.o -c /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/tests/FileManagerTests.cpp
+
+tests/CMakeFiles/AllTests.dir/FileManagerTests.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/AllTests.dir/FileManagerTests.cpp.i"
+	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/tests/FileManagerTests.cpp > CMakeFiles/AllTests.dir/FileManagerTests.cpp.i
+
+tests/CMakeFiles/AllTests.dir/FileManagerTests.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/AllTests.dir/FileManagerTests.cpp.s"
+	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/tests/FileManagerTests.cpp -o CMakeFiles/AllTests.dir/FileManagerTests.cpp.s
+
 # Object files for target AllTests
 AllTests_OBJECTS = \
 "CMakeFiles/AllTests.dir/MapTests.cpp.o" \
 "CMakeFiles/AllTests.dir/RobotTests.cpp.o" \
 "CMakeFiles/AllTests.dir/SimulationTests.cpp.o" \
-"CMakeFiles/AllTests.dir/TileTests.cpp.o"
+"CMakeFiles/AllTests.dir/TileTests.cpp.o" \
+"CMakeFiles/AllTests.dir/FileManagerTests.cpp.o"
 
 # External object files for target AllTests
 AllTests_EXTERNAL_OBJECTS =
@@ -139,12 +154,13 @@ tests/AllTests: tests/CMakeFiles/AllTests.dir/MapTests.cpp.o
 tests/AllTests: tests/CMakeFiles/AllTests.dir/RobotTests.cpp.o
 tests/AllTests: tests/CMakeFiles/AllTests.dir/SimulationTests.cpp.o
 tests/AllTests: tests/CMakeFiles/AllTests.dir/TileTests.cpp.o
+tests/AllTests: tests/CMakeFiles/AllTests.dir/FileManagerTests.cpp.o
 tests/AllTests: tests/CMakeFiles/AllTests.dir/build.make
 tests/AllTests: libRobotLib.a
 tests/AllTests: /usr/lib64/libgtest_main.so.1.14.0
 tests/AllTests: /usr/lib64/libgtest.so.1.14.0
 tests/AllTests: tests/CMakeFiles/AllTests.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable AllTests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable AllTests"
 	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/AllTests.dir/link.txt --verbose=$(VERBOSE)
 	cd /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests && /usr/bin/cmake -D TEST_TARGET=AllTests -D TEST_EXECUTABLE=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/AllTests -D TEST_EXECUTOR= -D TEST_WORKING_DIR=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests -D TEST_EXTRA_ARGS= -D TEST_PROPERTIES= -D TEST_PREFIX= -D TEST_SUFFIX= -D TEST_FILTER= -D NO_PRETTY_TYPES=FALSE -D NO_PRETTY_VALUES=FALSE -D TEST_LIST=AllTests_TESTS -D CTEST_FILE=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/AllTests[1]_tests.cmake -D TEST_DISCOVERY_TIMEOUT=5 -D TEST_XML_OUTPUT_DIR= -P /usr/share/cmake/Modules/GoogleTestAddTests.cmake
 

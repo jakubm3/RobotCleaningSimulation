@@ -7,6 +7,7 @@
 /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/RobotTests.dir
 /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/SimulationTests.dir
 /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/TileTests.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/FileManagerTests.dir
 /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/AllTests.dir
 /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/test.dir
 /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/edit_cache.dir
