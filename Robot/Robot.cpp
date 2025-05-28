@@ -265,6 +265,57 @@ bool Robot::isRobotValid() const {
 	return true;
 }
 
+bool Robot::isRobotStateValid() const {
+    // Check if map is valid
+    if (!map.isMapValid()) {
+        return false;
+    }
+
+    // Check if robot position is valid
+    if (position_ >= map.getSize()) {
+        return false;
+    }
+
+    // Check if robot is on a valid tile
+    const Tile* currentTile = map.getTile(position_);
+    if (!currentTile || !currentTile->isMoveValid()) {
+        return false;
+    }
+
+    // Check if charger ID is valid
+    if (chargerId_ >= map.getSize()) {
+        return false;
+    }
+
+    // Check if charger tile exists and is actually a charger
+    const Tile* chargerTile = map.getTile(chargerId_);
+    if (!chargerTile || !dynamic_cast<const Charger*>(chargerTile)) {
+        return false;
+    }
+
+    // Check if cleaning efficiency is in valid range
+    if (cleaningEfficiency > 9) {
+        return false;
+    }
+
+    // Check if tilesToCheck size matches map size
+    if (tilesToCheck.size() != map.getSize()) {
+        return false;
+    }
+
+    // Validate path elements
+    std::queue<size_t> tempPath = path;
+    while (!tempPath.empty()) {
+        size_t pathElement = tempPath.front();
+        tempPath.pop();
+        if (pathElement >= map.getSize()) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void Robot::setEfficiency(unsigned int efficiency) {
 	efficiency = std::min(9u, efficiency);
 	cleaningEfficiency = efficiency;
