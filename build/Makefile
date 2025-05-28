@@ -366,6 +366,7 @@ Robot/Simulation.o: Robot/Simulation.cpp.o
 
 # target to build an object file
 Robot/Simulation.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotLib.dir/build.make CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotMain.dir/build.make CMakeFiles/RobotMain.dir/Robot/Simulation.cpp.o
 .PHONY : Robot/Simulation.cpp.o
 
@@ -374,6 +375,7 @@ Robot/Simulation.i: Robot/Simulation.cpp.i
 
 # target to preprocess a source file
 Robot/Simulation.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotLib.dir/build.make CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotMain.dir/build.make CMakeFiles/RobotMain.dir/Robot/Simulation.cpp.i
 .PHONY : Robot/Simulation.cpp.i
 
@@ -382,6 +384,7 @@ Robot/Simulation.s: Robot/Simulation.cpp.s
 
 # target to generate assembly for a file
 Robot/Simulation.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotLib.dir/build.make CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotMain.dir/build.make CMakeFiles/RobotMain.dir/Robot/Simulation.cpp.s
 .PHONY : Robot/Simulation.cpp.s
 

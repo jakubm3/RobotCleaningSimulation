@@ -167,6 +167,20 @@ CMakeFiles/RobotLib.dir/Robot/Robot.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/RobotLib.dir/Robot/Robot.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/Robot/Robot.cpp -o CMakeFiles/RobotLib.dir/Robot/Robot.cpp.s
 
+CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.o: CMakeFiles/RobotLib.dir/flags.make
+CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.o: /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/Robot/Simulation.cpp
+CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.o: CMakeFiles/RobotLib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.o -MF CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.o.d -o CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.o -c /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/Robot/Simulation.cpp
+
+CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/Robot/Simulation.cpp > CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.i
+
+CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/Robot/Simulation.cpp -o CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.s
+
 # Object files for target RobotLib
 RobotLib_OBJECTS = \
 "CMakeFiles/RobotLib.dir/Robot/Tile.cpp.o" \
@@ -175,7 +189,8 @@ RobotLib_OBJECTS = \
 "CMakeFiles/RobotLib.dir/Robot/Charger.cpp.o" \
 "CMakeFiles/RobotLib.dir/Robot/UnVisited.cpp.o" \
 "CMakeFiles/RobotLib.dir/Robot/Map.cpp.o" \
-"CMakeFiles/RobotLib.dir/Robot/Robot.cpp.o"
+"CMakeFiles/RobotLib.dir/Robot/Robot.cpp.o" \
+"CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.o"
 
 # External object files for target RobotLib
 RobotLib_EXTERNAL_OBJECTS =
@@ -187,9 +202,10 @@ libRobotLib.a: CMakeFiles/RobotLib.dir/Robot/Charger.cpp.o
 libRobotLib.a: CMakeFiles/RobotLib.dir/Robot/UnVisited.cpp.o
 libRobotLib.a: CMakeFiles/RobotLib.dir/Robot/Map.cpp.o
 libRobotLib.a: CMakeFiles/RobotLib.dir/Robot/Robot.cpp.o
+libRobotLib.a: CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.o
 libRobotLib.a: CMakeFiles/RobotLib.dir/build.make
 libRobotLib.a: CMakeFiles/RobotLib.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX static library libRobotLib.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX static library libRobotLib.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/RobotLib.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/RobotLib.dir/link.txt --verbose=$(VERBOSE)
 

@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/RobotLib.dir/Robot/Obstacle.cpp.o.d"
   "CMakeFiles/RobotLib.dir/Robot/Robot.cpp.o"
   "CMakeFiles/RobotLib.dir/Robot/Robot.cpp.o.d"
+  "CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.o"
+  "CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.o.d"
   "CMakeFiles/RobotLib.dir/Robot/Tile.cpp.o"
   "CMakeFiles/RobotLib.dir/Robot/Tile.cpp.o.d"
   "CMakeFiles/RobotLib.dir/Robot/UnVisited.cpp.o"
