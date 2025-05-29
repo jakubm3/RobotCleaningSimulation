@@ -6,6 +6,7 @@
 #include <tuple>
 #include <string>
 #include <sstream>
+#include <limits>
 #include "Map.h"
 
 enum class RobotAction {

@@ -1,4 +1,5 @@
 #include "Robot.h"
+#include <limits>
 
 Direction Robot::move() {
 	if (path.empty()) {
