@@ -46,7 +46,22 @@ Simulation:
 
 4. Tests:
 
-
+Simulation:
+	1.Basic Construction
+	2.File Operations
+	3.State Validation
+	4.Core Functionality
+	5.Data Persistence
+	6.Special Cases
+	7.Component Interaction
+	8.Error Management
+	9.Operational Stability
+	10.Resource Management
+	11.Path Resolution
+	12.State Consistency
+	13.Complex Scenarios
+	14.Performance
+	15.Boundary Conditions
 
 
 
