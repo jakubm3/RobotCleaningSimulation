@@ -100,13 +100,29 @@ bool Simulation::isSimulationValid() const {
         return false;
     }
 
-    // New validation: Map Dimensions Consistency
-    if (robot.getMemoryMap().getWidth() != map.getWidth() ||
-        robot.getMemoryMap().getHeight() != map.getHeight()) {
-        std::cerr << "Validation Error: Robot's internal map dimensions ("
-            << robot.getMemoryMap().getWidth() << "x" << robot.getMemoryMap().getHeight()
-            << ") do not match simulation map dimensions ("
-            << map.getWidth() << "x" << map.getHeight() << ").\n";
+    // Charger ID Validation
+    size_t chargerId = map.getChargerId();
+
+    // Check if charger ID is within valid range
+    if (chargerId >= map.getSize()) {
+        std::cerr << "Validation Error: Charger ID (" << chargerId
+            << ") is out of bounds. Map size is " << map.getSize() << ".\n";
+        return false;
+    }
+
+    // Check if the tile at charger ID exists
+    const Tile* chargerTile = map.getTile(chargerId);
+    if (!chargerTile) {
+        std::cerr << "Validation Error: Charger tile at ID " << chargerId
+            << " does not exist.\n";
+        return false;
+    }
+
+    // Check if the tile at charger ID is actually a charger
+    const Charger* charger = dynamic_cast<const Charger*>(chargerTile);
+    if (!charger) {
+        std::cerr << "Validation Error: Tile at charger ID " << chargerId
+            << " is not a charger tile.\n";
         return false;
     }
 
