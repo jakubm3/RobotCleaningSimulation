@@ -29,12 +29,20 @@ queue - used to store path of robot
 stack - used in bfs alghorithms
 tuple - used to return type of action and its direction
 utility - to create tuples 
+optional - handling potentially missing values
 
 3. Use of exceptions:
 Robot:
 - During loading invalid robot: handled in Simulation (created default robot)
 - Being on invalid tile: handled in Simulation (stopped simulation)
 - Ordered to move on tile out of robot's range: handled in Simulation (stopped simulation)
+
+Simulation:
+- Invalid robot during loading: handled by creating default robot
+- Robot on invalid tile: stops simulation
+- Robot ordered to move out of range: stops simulation
+- File operations: handled with error messages
+- Invalid user input: prompts for retry
 
 4. Tests:
 
