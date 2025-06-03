@@ -52,22 +52,6 @@ private:
     void updateRobotMemory(size_t tileId, const Tile* tileObj);
     void cleanTile(size_t tileId, unsigned int efficiency);
 
-    // Private simulation methods
-    bool isSimulationValid() const;
-    void addRubbish(size_t tileId, unsigned int dirtiness);
-    void addSerialRubbish(unsigned int numberOfRubbishPoints);
-    void changeRobotsPosition(size_t newPositionId);
-    void orderRobotToGoHome();
-    void orderRobotToMove(size_t targetTileId);
-    void orderRobotToClean(size_t tileId, unsigned int radius);
-    void orderRobotToCleanEfficiently();
-    void resetRobotMemory();
-    void saveSimulation(fs::path filePath);
-    void loadSimulation(fs::path filePath);
-    void runSimulation(unsigned int steps);
-    void exitSimulation();
-    void printSimulation();
-
 public:
     // Constructor
     Simulation(size_t width = 0, size_t height = 0, size_t chargerId = 0)

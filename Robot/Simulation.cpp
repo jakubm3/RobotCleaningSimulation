@@ -94,15 +94,16 @@ fs::path getFilePathInput(const std::string& prompt) {
 }
 
 bool Simulation::isRobotValid() const {
+
+
     // Check if robot's position is within valid range
-    size_t robotPosition = robot.getPosition();
-    if (robotPosition >= map.getSize()) {
-        std::cerr << "Robot Validation Error: Robot position (" << robotPosition
-            << ") is out of bounds. Map size is " << map.getSize() << ".\n";
+    if (!robot.isRobotValid()) {
+        std::cerr << "Robot Validation Error: Robot have incorrect data.\n";
         return false;
     }
 
     // Check if the tile at robot's position exists
+    size_t robotPosition = robot.getPosition();
     const Tile* robotTile = map.getTile(robotPosition);
     if (!robotTile) {
         std::cerr << "Robot Validation Error: Tile at robot position " << robotPosition
