@@ -93,6 +93,27 @@ fs::path getFilePathInput(const std::string& prompt) {
     }
 }
 
+bool Simulation::isRobotValid() const {
+    // Check if robot's position is within valid range
+    size_t robotPosition = robot.getPosition();
+    if (robotPosition >= map.getSize()) {
+        std::cerr << "Robot Validation Error: Robot position (" << robotPosition
+            << ") is out of bounds. Map size is " << map.getSize() << ".\n";
+        return false;
+    }
+
+    // Check if the tile at robot's position exists
+    const Tile* robotTile = map.getTile(robotPosition);
+    if (!robotTile) {
+        std::cerr << "Robot Validation Error: Tile at robot position " << robotPosition
+            << " does not exist.\n";
+        return false;
+    }
+
+    std::cout << "Robot validation check passed.\n";
+    return true;
+}
+
 // Checks if the current simulation state is valid.
 bool Simulation::isSimulationValid() const {
     if (!map.isMapValid()) {
@@ -123,6 +144,10 @@ bool Simulation::isSimulationValid() const {
     if (!charger) {
         std::cerr << "Validation Error: Tile at charger ID " << chargerId
             << " is not a charger tile.\n";
+        return false;
+    }
+
+    if (!isRobotValid()) {
         return false;
     }
 

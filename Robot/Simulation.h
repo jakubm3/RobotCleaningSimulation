@@ -35,6 +35,7 @@ private:
     // NEW METHOD DECLARATION (already there, just confirming)
     void addSerialRubbish(unsigned int numberOfRubbishPoints);
 
+    bool isRobotValid() const;
     void changeRobotsPosition(size_t newPositionId); // Assuming robot moves to a tile ID
     void orderRobotToGoHome(); // No parameters needed
     void orderRobotToMove(size_t targetTileId); // Robot moves to specific tile
