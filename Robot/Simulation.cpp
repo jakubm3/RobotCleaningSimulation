@@ -93,6 +93,27 @@ fs::path getFilePathInput(const std::string& prompt) {
     }
 }
 
+bool Simulation::isRobotValid() const {
+    // Check if robot's position is within valid range
+    size_t robotPosition = robot.getPosition();
+    if (robotPosition >= map.getSize()) {
+        std::cerr << "Robot Validation Error: Robot position (" << robotPosition
+            << ") is out of bounds. Map size is " << map.getSize() << ".\n";
+        return false;
+    }
+
+    // Check if the tile at robot's position exists
+    const Tile* robotTile = map.getTile(robotPosition);
+    if (!robotTile) {
+        std::cerr << "Robot Validation Error: Tile at robot position " << robotPosition
+            << " does not exist.\n";
+        return false;
+    }
+
+    std::cout << "Robot validation check passed.\n";
+    return true;
+}
+
 // Checks if the current simulation state is valid.
 bool Simulation::isSimulationValid() const {
     // Symulacja nie pozwala na UnVisited tiles w prawdziwej mapie
@@ -101,19 +122,33 @@ bool Simulation::isSimulationValid() const {
         return false;
     }
 
-    // Robot może mieć UnVisited tiles w pamięci
-    if (!robot.getMemoryMap().isMapValid(true)) {
-        std::cerr << "Robot's memory map is not valid.\n";
+    // Charger ID Validation
+    size_t chargerId = map.getChargerId();
+
+    // Check if charger ID is within valid range
+    if (chargerId >= map.getSize()) {
+        std::cerr << "Validation Error: Charger ID (" << chargerId
+            << ") is out of bounds. Map size is " << map.getSize() << ".\n";
         return false;
     }
 
-    // Map Dimensions Consistency
-    if (robot.getMemoryMap().getWidth() != map.getWidth() ||
-        robot.getMemoryMap().getHeight() != map.getHeight()) {
-        std::cerr << "Validation Error: Robot's internal map dimensions ("
-            << robot.getMemoryMap().getWidth() << "x" << robot.getMemoryMap().getHeight()
-            << ") do not match simulation map dimensions ("
-            << map.getWidth() << "x" << map.getHeight() << ").\n";
+    // Check if the tile at charger ID exists
+    const Tile* chargerTile = map.getTile(chargerId);
+    if (!chargerTile) {
+        std::cerr << "Validation Error: Charger tile at ID " << chargerId
+            << " does not exist.\n";
+        return false;
+    }
+
+    // Check if the tile at charger ID is actually a charger
+    const Charger* charger = dynamic_cast<const Charger*>(chargerTile);
+    if (!charger) {
+        std::cerr << "Validation Error: Tile at charger ID " << chargerId
+            << " is not a charger tile.\n";
+        return false;
+    }
+
+    if (!isRobotValid()) {
         return false;
     }
 

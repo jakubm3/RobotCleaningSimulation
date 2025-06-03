@@ -80,5 +80,6 @@
   <ItemGroup>
     <Text Include="exampleSave.txt" />
     <Text Include="blocked.txt" />
+    <Text Include="bigRoom,.txt" />
   </ItemGroup>
 </Project>

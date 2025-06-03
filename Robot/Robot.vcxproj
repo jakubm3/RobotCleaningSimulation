@@ -155,6 +155,7 @@
   <ItemGroup>
     <Text Include="blocked.txt" />
     <Text Include="exampleSave.txt" />
+    <Text Include="bigRoom,.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

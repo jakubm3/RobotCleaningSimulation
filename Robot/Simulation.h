@@ -26,7 +26,29 @@ private:
     void addLog(const std::string& message);
     void askToSaveLogs();
 
-    // Helper methods
+    // Check if simulation setup is valid
+    bool isSimulationValid() const;
+
+    // Simulation options
+    void addRubbish(size_t tileId, unsigned int dirtiness);
+    // NEW METHOD DECLARATION (already there, just confirming)
+    void addSerialRubbish(unsigned int numberOfRubbishPoints);
+
+    bool isRobotValid() const;
+    void changeRobotsPosition(size_t newPositionId); // Assuming robot moves to a tile ID
+    void orderRobotToGoHome(); // No parameters needed
+    void orderRobotToMove(size_t targetTileId); // Robot moves to specific tile
+    void orderRobotToClean(size_t tileId, unsigned int radius); // Robot cleans a specific tile with radius
+    void orderRobotToCleanEfficiently(); // NEW: Declare this function here!
+    void resetRobotMemory(); // No parameters needed
+    void saveSimulation(fs::path filePath); // Save to a specific file
+    void loadSimulation(fs::path filePath); // Load from a specific file
+    void runSimulation(unsigned int steps); // Run for N steps
+    void exitSimulation(); // No parameters needed
+
+    void printSimulation();
+
+    // Robots interaction
     void updateRobotMemory(size_t tileId, const Tile* tileObj);
     void cleanTile(size_t tileId, unsigned int efficiency);
 
