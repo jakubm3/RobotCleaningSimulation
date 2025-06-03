@@ -260,10 +260,20 @@ void Robot::setPosition(size_t newPosition) {
 }
 
 bool Robot::isRobotValid() const {
-	if (!map.isMapValid()) {
-		return false;
-	}
-	return true;
+    // Robot może mieć UnVisited tiles w swojej pamięci
+    if (map.getSize() != map.getWidth() * map.getHeight()) {
+        return false;
+    }
+
+    size_t chargerCount = 0;
+    for (size_t i = 0; i < map.getSize(); ++i) {
+        const Tile* tile = map.getTile(i);
+        if (dynamic_cast<const Charger*>(tile)) {
+            chargerCount++;
+        }
+    }
+
+    return chargerCount == 1;
 }
 
 bool Robot::isRobotStateValid() const {
@@ -502,12 +512,18 @@ void Robot::resetMemory() {
 }
 
 void Robot::loadRobot(std::istream& in) {
+    // Robot zawsze ładuje swoją mapę pamięci z UnVisited tiles
+    std::stringstream mapStream;
     std::string line;
 
-    // Skip map data by reading until empty line
+    // Read map data first
     while (std::getline(in, line)) {
         if (line.empty()) break;
+        mapStream << line << "\n";
     }
+
+    // Load map with UnVisited tiles allowed (robot's memory)
+    map.loadMap(mapStream, true);
 
     // Read robot state data
     int currTaskInt;
@@ -537,38 +553,6 @@ void Robot::loadRobot(std::istream& in) {
         tempQueue.push(elem);
     }
     path = std::move(tempQueue);
-
-    // Determine map dimensions from charger position and map size
-    // Simple approach: try to find dimensions that work
-    size_t mapSize = tilesToCheck.size();
-    size_t width = 1;
-    size_t height = mapSize;
-
-    // Find reasonable dimensions by trying factors
-    for (size_t w = 1; w * w <= mapSize; ++w) {
-        if (mapSize % w == 0) {
-            width = w;
-            height = mapSize / w;
-        }
-    }
-
-    // If charger position helps determine layout, use it
-    if (chargerId_ < mapSize) {
-        // Try to make it more rectangular if possible
-        for (size_t w = 1; w <= mapSize; ++w) {
-            if (mapSize % w == 0) {
-                size_t h = mapSize / w;
-                if (chargerId_ < w * h && chargerId_ / w < h && chargerId_ % w < w) {
-                    width = w;
-                    height = h;
-                    break;
-                }
-            }
-        }
-    }
-
-    // Create map filled with UnVisited tiles except charger
-    map = Map(width, height, chargerId_);
 }
 
 void Robot::saveRobot(std::ostream& out) const {

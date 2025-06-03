@@ -47,6 +47,7 @@ public:
 
     // Map operations
     bool isMapValid() const;
+    bool isMapValid(bool allowUnvisited) const;
     bool canMoveOn(size_t tileId) const;
     void loadMap(std::istream& in);
     void loadMap(std::istream& in, bool allowUnvisited);

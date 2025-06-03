@@ -60,6 +60,10 @@ size_t Map::getChargerId() const noexcept {
 }
 
 bool Map::isMapValid() const {
+    return isMapValid(false); // Domyślnie nie pozwala na UnVisited
+}
+
+bool Map::isMapValid(bool allowUnvisited) const {
     if (tiles.size() != width * height) {
         return false;
     }
@@ -68,6 +72,11 @@ bool Map::isMapValid() const {
     for (const auto& tile : tiles) {
         if (dynamic_cast<const Charger*>(tile.get())) {
             chargerCount++;
+        }
+
+        // Sprawdź czy UnVisited są dozwolone
+        if (!allowUnvisited && dynamic_cast<const UnVisited*>(tile.get())) {
+            return false;
         }
     }
 

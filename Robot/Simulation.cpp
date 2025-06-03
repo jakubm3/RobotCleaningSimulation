@@ -95,12 +95,19 @@ fs::path getFilePathInput(const std::string& prompt) {
 
 // Checks if the current simulation state is valid.
 bool Simulation::isSimulationValid() const {
-    if (!map.isMapValid()) {
+    // Symulacja nie pozwala na UnVisited tiles w prawdziwej mapie
+    if (!map.isMapValid(false)) {
         std::cerr << Messages::MAP_NOT_VALID_ERROR;
         return false;
     }
 
-    // New validation: Map Dimensions Consistency
+    // Robot może mieć UnVisited tiles w pamięci
+    if (!robot.getMemoryMap().isMapValid(true)) {
+        std::cerr << "Robot's memory map is not valid.\n";
+        return false;
+    }
+
+    // Map Dimensions Consistency
     if (robot.getMemoryMap().getWidth() != map.getWidth() ||
         robot.getMemoryMap().getHeight() != map.getHeight()) {
         std::cerr << "Validation Error: Robot's internal map dimensions ("
@@ -857,7 +864,7 @@ void Simulation::loadFromFile(fs::path filePath) {
     inputFile.close();
 
     try {
-        // Load simulation map without UnVisited tiles
+        // Load simulation map without UnVisited tiles (real world)
         map.loadMap(mapDataStream, false);
         std::cout << Messages::MAP_DATA_LOADED_SUCCESSFULLY;
     }
@@ -869,7 +876,7 @@ void Simulation::loadFromFile(fs::path filePath) {
 
     if (robotDataStream.str().empty()) {
         std::cout << Messages::ROBOT_DATA_NOT_FOUND_INIT;
-        // Create robot with UnVisited memory (constructor will handle this)
+        // Create robot with UnVisited memory
         robot = Robot(map.getWidth(), map.getHeight(), map.getChargerId());
         std::cout << Messages::ROBOT_INITIALIZED_WITH << map.getWidth()
             << Messages::ROBOT_INITIALIZED_WITH_CONT1 << map.getHeight()
@@ -877,13 +884,8 @@ void Simulation::loadFromFile(fs::path filePath) {
     }
     else {
         try {
-            // First create robot with correct dimensions and UnVisited memory
-            robot = Robot(map.getWidth(), map.getHeight(), map.getChargerId());
-
-            // Then load robot state but keep the UnVisited memory structure
-            std::stringstream robotStreamCopy(robotDataStream.str());
-            robot.loadRobot(robotStreamCopy);
-
+            // Robot loads with his memory map (can contain UnVisited)
+            robot.loadRobot(robotDataStream);
             std::cout << Messages::ROBOT_DATA_LOADED_SUCCESSFULLY;
         }
         catch (const std::exception& e) {
