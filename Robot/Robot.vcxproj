@@ -142,6 +142,7 @@
     <ClInclude Include="Charger.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Messages.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="Robot.h" />
     <ClInclude Include="Simulation.h" />
@@ -154,6 +155,7 @@
   <ItemGroup>
     <Text Include="blocked.txt" />
     <Text Include="exampleSave.txt" />
+    <Text Include="bigRoom,.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

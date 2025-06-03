@@ -1,0 +1,14 @@
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles/RobotLib.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles/RobotMain.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles/test.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles/edit_cache.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/CMakeFiles/rebuild_cache.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/MapTests.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/RobotTests.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/SimulationTests.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/TileTests.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/FileManagerTests.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/AllTests.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/test.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/edit_cache.dir
+/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/CMakeFiles/rebuild_cache.dir

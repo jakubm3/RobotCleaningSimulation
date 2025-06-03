@@ -4,7 +4,11 @@
 #include <sstream>
 
 Map::Map(std::istream& in) {
-    loadMap(in);
+    loadMap(in, false);
+}
+
+Map::Map(std::istream& in, bool allowUnvisited) {
+    loadMap(in, allowUnvisited);
 }
 
 Map::Map(size_t mapWidth, size_t mapHeight, size_t chargerTileId)
@@ -56,6 +60,10 @@ size_t Map::getChargerId() const noexcept {
 }
 
 bool Map::isMapValid() const {
+    return isMapValid(false); // Domyślnie nie pozwala na UnVisited
+}
+
+bool Map::isMapValid(bool allowUnvisited) const {
     if (tiles.size() != width * height) {
         return false;
     }
@@ -64,6 +72,11 @@ bool Map::isMapValid() const {
     for (const auto& tile : tiles) {
         if (dynamic_cast<const Charger*>(tile.get())) {
             chargerCount++;
+        }
+
+        // Sprawdź czy UnVisited są dozwolone
+        if (!allowUnvisited && dynamic_cast<const UnVisited*>(tile.get())) {
+            return false;
         }
     }
 
@@ -78,6 +91,10 @@ bool Map::canMoveOn(size_t tileId) const {
 }
 
 void Map::loadMap(std::istream& in) {
+    loadMap(in, false);
+}
+
+void Map::loadMap(std::istream& in, bool allowUnvisited) {
     tiles.clear();
     width = 0;
     height = 0;
@@ -118,7 +135,7 @@ void Map::loadMap(std::istream& in) {
                 }
                 chargerId = idCounter;
             }
-            else if (tileChar == '?') {
+            else if (tileChar == '?' && allowUnvisited) {
                 tiles.push_back(std::make_unique<UnVisited>(idCounter));
             }
             else {
@@ -138,17 +155,9 @@ void Map::updateTile(size_t tileId, const Tile* tileObj) {
         throw std::out_of_range("Tile ID out of range");
     }
 
-    // If current tile is UnVisited, replace with copy
-    if (dynamic_cast<const UnVisited*>(tiles[tileId].get())) {
-        tiles[tileId] = tileObj->clone();
-        tiles[tileId]->setId(tileId);
-    }
-    // If both are Floor tiles, copy cleanliness
-    else if (const Floor* currentFloor = dynamic_cast<const Floor*>(tiles[tileId].get())) {
-        if (const Floor* newFloor = dynamic_cast<const Floor*>(tileObj)) {
-            const_cast<Floor*>(currentFloor)->setCleanliness(newFloor->getCleanliness());
-        }
-    }
+    // Always replace the tile with a copy of the given tile
+    tiles[tileId] = tileObj->clone();
+    tiles[tileId]->setId(tileId);
 }
 
 std::optional<size_t> Map::getIndex(size_t position, Direction direction) const {
@@ -242,35 +251,6 @@ void Map::saveMap(std::ostream& os) const {
         }
         os << '\n';
     }
-}
-
-std::optional<size_t> Map::getIndex(size_t position, Direction direction) {
-    if (position >= tiles.size()) return std::nullopt;
-
-    size_t x = position % width;
-    size_t y = position / width;
-
-    switch (direction) {
-    case Direction::up:
-        if (y == 0) return std::nullopt;
-        y--;
-        break;
-    case Direction::down:
-        if (y + 1 >= height) return std::nullopt;
-        y++;
-        break;
-    case Direction::left:
-        if (x == 0) return std::nullopt;
-        x--;
-        break;
-    case Direction::right:
-        if (x + 1 >= width) return std::nullopt;
-        x++;
-        break;
-    }
-
-    size_t newIndex = y * width + x;
-    return newIndex;
 }
 
 std::ostream& operator<<(std::ostream& os, const Map& map) {

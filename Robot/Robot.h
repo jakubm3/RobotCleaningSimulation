@@ -6,6 +6,7 @@
 #include <tuple>
 #include <string>
 #include <sstream>
+#include <limits>
 #include "Map.h"
 
 enum class RobotAction {
@@ -38,6 +39,7 @@ public:
 	Robot(size_t mapWidth, size_t mapHeight, size_t chargerId);
 	void setPosition(size_t newPosition);
 	bool isRobotValid() const;
+	bool isRobotStateValid() const;
 	void setEfficiency(unsigned int efficiency);
 	size_t getPosition() const noexcept { return position_; }
 	size_t getChargerId() const noexcept { return chargerId_; }

@@ -28,6 +28,7 @@ public:
     // Constructors and destructor
     Map() = default;
     Map(std::istream& in);
+    Map(std::istream& in, bool allowUnvisited);
     Map(size_t mapWidth, size_t mapHeight, size_t chargerTileId);
 
     // Rule of five
@@ -42,19 +43,20 @@ public:
     size_t getHeight() const noexcept;
     size_t getChargerId() const noexcept;
     size_t getSize() const { return height * width; }
-    std::optional<size_t> getIndex(size_t position, Direction direction);
+    std::optional<size_t> getIndex(size_t position, Direction direction) const;
 
     // Map operations
     bool isMapValid() const;
+    bool isMapValid(bool allowUnvisited) const;
     bool canMoveOn(size_t tileId) const;
     void loadMap(std::istream& in);
+    void loadMap(std::istream& in, bool allowUnvisited);
     void saveMap(std::ostream& os) const;
     void updateTile(size_t tileId, const Tile* tileObj);
     Tile* getTile(size_t index);
     const Tile* getTile(size_t index) const;
     Tile* getTile(size_t index, Direction direction);
     const Tile* getTile(size_t index, Direction direction) const;
-    std::optional<size_t> getIndex(size_t position, Direction direction) const;
 
     // Output operator
     friend std::ostream& operator<<(std::ostream& os, const Map& map);

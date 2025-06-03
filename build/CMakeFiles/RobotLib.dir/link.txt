@@ -1,0 +1,2 @@
+/usr/bin/ar qc libRobotLib.a CMakeFiles/RobotLib.dir/Robot/Tile.cpp.o CMakeFiles/RobotLib.dir/Robot/Floor.cpp.o CMakeFiles/RobotLib.dir/Robot/Obstacle.cpp.o CMakeFiles/RobotLib.dir/Robot/Charger.cpp.o CMakeFiles/RobotLib.dir/Robot/UnVisited.cpp.o CMakeFiles/RobotLib.dir/Robot/Map.cpp.o CMakeFiles/RobotLib.dir/Robot/Robot.cpp.o CMakeFiles/RobotLib.dir/Robot/Simulation.cpp.o
+/usr/bin/ranlib libRobotLib.a
