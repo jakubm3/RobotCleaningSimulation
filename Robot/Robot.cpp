@@ -63,7 +63,7 @@ bool Robot::createPath(size_t targetId) {
 		q.pop();
 		if (current == targetId) {
 			std::stack<size_t> tempStack;
-			for (size_t v = targetId; v != -1; v = parent[v]) {
+			for (size_t v = targetId; v != std::numeric_limits<size_t>::max(); v = parent[v]) {
 				tempStack.push(v);
 			}
 			tempStack.pop();
@@ -111,7 +111,7 @@ bool Robot::createPathUnvisited() {
 		q.pop();
 		if (const auto unVisited = dynamic_cast<const UnVisited*>(tile)) {
 			std::stack<size_t> tempStack;
-			for (size_t v = current; v != -1; v = parent[v]) {
+			for (size_t v = current; v != std::numeric_limits<size_t>::max(); v = parent[v]) {
 				tempStack.push(v);
 			}
 			tempStack.pop();
@@ -161,7 +161,7 @@ bool Robot::createPathTrash() {
 		auto floor = dynamic_cast<Floor*>(tile);
 		if (floor && floor->isDirty()) {
 			std::stack<size_t> tempStack;
-			for (size_t v = current; v != -1; v = parent[v]) {
+			for (size_t v = current; v != std::numeric_limits<size_t>::max(); v = parent[v]) {
 				tempStack.push(v);
 			}
 			tempStack.pop();
@@ -205,12 +205,11 @@ bool Robot::createPathToVisit() {
 	q.push(position_);
 	while (!q.empty()) {
 		size_t current = q.front();
-		Tile* tile = map.getTile(current);
 		q.pop();
 
 		if (tilesToCheck[current]) {
 			std::stack<size_t> tempStack;
-			for (size_t v = current; v != -1; v = parent[v]) {
+			for (size_t v = current; v != std::numeric_limits<size_t>::max(); v = parent[v]) {
 				tempStack.push(v);
 			}
 			tempStack.pop();

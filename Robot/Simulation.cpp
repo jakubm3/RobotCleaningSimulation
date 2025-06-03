@@ -167,7 +167,7 @@ void Simulation::addSerialRubbish(unsigned int totalRubbishAmount) {
     const unsigned int maxAttemptsToFindTile = 100 * floorTileIds.size();
 
     while (rubbishPointsDistributed < totalRubbishAmount) {
-        int attempts = 0;
+        unsigned int attempts = 0;
         bool tileDirtiedInThisIteration = false;
 
         while (attempts < maxAttemptsToFindTile && !tileDirtiedInThisIteration) {

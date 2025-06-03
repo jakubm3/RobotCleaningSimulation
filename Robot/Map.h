@@ -27,7 +27,8 @@ private:
 public:
     // Constructors and destructor
     Map() = default;
-    Map(std::istream& in, bool allowUnvisited = false);
+    Map(std::istream& in);
+    Map(std::istream& in, bool allowUnvisited);
     Map(size_t mapWidth, size_t mapHeight, size_t chargerTileId);
 
     // Rule of five
@@ -47,7 +48,8 @@ public:
     // Map operations
     bool isMapValid() const;
     bool canMoveOn(size_t tileId) const;
-    void loadMap(std::istream& in, bool allowUnvisited = false);
+    void loadMap(std::istream& in);
+    void loadMap(std::istream& in, bool allowUnvisited);
     void saveMap(std::ostream& os) const;
     void updateTile(size_t tileId, const Tile* tileObj);
     Tile* getTile(size_t index);
