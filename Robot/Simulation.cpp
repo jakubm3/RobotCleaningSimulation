@@ -116,7 +116,8 @@ bool Simulation::isRobotValid() const {
 
 // Checks if the current simulation state is valid.
 bool Simulation::isSimulationValid() const {
-    if (!map.isMapValid()) {
+    // Symulacja nie pozwala na UnVisited tiles w prawdziwej mapie
+    if (!map.isMapValid(false)) {
         std::cerr << Messages::MAP_NOT_VALID_ERROR;
         return false;
     }
@@ -208,7 +209,7 @@ void Simulation::addSerialRubbish(unsigned int totalRubbishAmount) {
     const unsigned int maxAttemptsToFindTile = 100 * floorTileIds.size();
 
     while (rubbishPointsDistributed < totalRubbishAmount) {
-        int attempts = 0;
+        unsigned int attempts = 0;
         bool tileDirtiedInThisIteration = false;
 
         while (attempts < maxAttemptsToFindTile && !tileDirtiedInThisIteration) {
@@ -898,7 +899,8 @@ void Simulation::loadFromFile(fs::path filePath) {
     inputFile.close();
 
     try {
-        map.loadMap(mapDataStream);
+        // Load simulation map without UnVisited tiles (real world)
+        map.loadMap(mapDataStream, false);
         std::cout << Messages::MAP_DATA_LOADED_SUCCESSFULLY;
     }
     catch (const std::exception& e) {
@@ -909,6 +911,7 @@ void Simulation::loadFromFile(fs::path filePath) {
 
     if (robotDataStream.str().empty()) {
         std::cout << Messages::ROBOT_DATA_NOT_FOUND_INIT;
+        // Create robot with UnVisited memory
         robot = Robot(map.getWidth(), map.getHeight(), map.getChargerId());
         std::cout << Messages::ROBOT_INITIALIZED_WITH << map.getWidth()
             << Messages::ROBOT_INITIALIZED_WITH_CONT1 << map.getHeight()
@@ -916,6 +919,7 @@ void Simulation::loadFromFile(fs::path filePath) {
     }
     else {
         try {
+            // Robot loads with his memory map (can contain UnVisited)
             robot.loadRobot(robotDataStream);
             std::cout << Messages::ROBOT_DATA_LOADED_SUCCESSFULLY;
         }

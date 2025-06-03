@@ -1,4 +1,6 @@
 #include "Robot.h"
+#include <limits>
+#include <cmath>
 
 Direction Robot::move() {
 	if (path.empty()) {
@@ -62,7 +64,7 @@ bool Robot::createPath(size_t targetId) {
 		q.pop();
 		if (current == targetId) {
 			std::stack<size_t> tempStack;
-			for (size_t v = targetId; v != -1; v = parent[v]) {
+			for (size_t v = targetId; v != std::numeric_limits<size_t>::max(); v = parent[v]) {
 				tempStack.push(v);
 			}
 			tempStack.pop();
@@ -110,7 +112,7 @@ bool Robot::createPathUnvisited() {
 		q.pop();
 		if (const auto unVisited = dynamic_cast<const UnVisited*>(tile)) {
 			std::stack<size_t> tempStack;
-			for (size_t v = current; v != -1; v = parent[v]) {
+			for (size_t v = current; v != std::numeric_limits<size_t>::max(); v = parent[v]) {
 				tempStack.push(v);
 			}
 			tempStack.pop();
@@ -160,7 +162,7 @@ bool Robot::createPathTrash() {
 		auto floor = dynamic_cast<Floor*>(tile);
 		if (floor && floor->isDirty()) {
 			std::stack<size_t> tempStack;
-			for (size_t v = current; v != -1; v = parent[v]) {
+			for (size_t v = current; v != std::numeric_limits<size_t>::max(); v = parent[v]) {
 				tempStack.push(v);
 			}
 			tempStack.pop();
@@ -204,12 +206,11 @@ bool Robot::createPathToVisit() {
 	q.push(position_);
 	while (!q.empty()) {
 		size_t current = q.front();
-		Tile* tile = map.getTile(current);
 		q.pop();
 
 		if (tilesToCheck[current]) {
 			std::stack<size_t> tempStack;
-			for (size_t v = current; v != -1; v = parent[v]) {
+			for (size_t v = current; v != std::numeric_limits<size_t>::max(); v = parent[v]) {
 				tempStack.push(v);
 			}
 			tempStack.pop();
@@ -241,7 +242,7 @@ bool Robot::createPathToVisit() {
 }
 
 Robot::Robot(std::istream& in) {
-	loadRobot(in);
+    loadRobot(in);
 }
 
 Robot::Robot(size_t mapWidth, size_t mapHeight, size_t chargerId) {
@@ -259,10 +260,75 @@ void Robot::setPosition(size_t newPosition) {
 }
 
 bool Robot::isRobotValid() const {
-	if (!map.isMapValid()) {
-		return false;
-	}
-	return true;
+    // Robot może mieć UnVisited tiles w swojej pamięci
+    if (!map.isMapValid(true)) {
+        return false;
+    }
+
+    if (map.getSize() != map.getWidth() * map.getHeight()) {
+        return false;
+    }
+
+    size_t chargerCount = 0;
+    for (size_t i = 0; i < map.getSize(); ++i) {
+        const Tile* tile = map.getTile(i);
+        if (dynamic_cast<const Charger*>(tile)) {
+            chargerCount++;
+        }
+    }
+
+    return chargerCount == 1;
+}
+
+bool Robot::isRobotStateValid() const {
+    // Check if map is valid
+    if (!map.isMapValid(true)) {
+        return false;
+    }
+
+    // Check if robot position is valid
+    if (position_ >= map.getSize()) {
+        return false;
+    }
+
+    // Check if robot is on a valid tile
+    const Tile* currentTile = map.getTile(position_);
+    if (!currentTile || !currentTile->isMoveValid()) {
+        return false;
+    }
+
+    // Check if charger ID is valid
+    if (chargerId_ >= map.getSize()) {
+        return false;
+    }
+
+    // Check if charger tile exists and is actually a charger
+    const Tile* chargerTile = map.getTile(chargerId_);
+    if (!chargerTile || !dynamic_cast<const Charger*>(chargerTile)) {
+        return false;
+    }
+
+    // Check if cleaning efficiency is in valid range
+    if (cleaningEfficiency > 9) {
+        return false;
+    }
+
+    // Check if tilesToCheck size matches map size
+    if (tilesToCheck.size() != map.getSize()) {
+        return false;
+    }
+
+    // Validate path elements
+    std::queue<size_t> tempPath = path;
+    while (!tempPath.empty()) {
+        size_t pathElement = tempPath.front();
+        tempPath.pop();
+        if (pathElement >= map.getSize()) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void Robot::setEfficiency(unsigned int efficiency) {
@@ -450,63 +516,62 @@ void Robot::resetMemory() {
 }
 
 void Robot::loadRobot(std::istream& in) {
-	// 1. Odczytaj map ze strumienia a do pustej linii
-	std::stringstream mapStream;
-	std::string line;
-	while (std::getline(in, line)) {
-		if (line.empty()) break; // pusta linia jako separator
-		mapStream << line << "\n";
-	}
-	map.loadMap(mapStream);
+    // Robot zawsze ładuje swoją mapę pamięci z UnVisited tiles
+    std::stringstream mapStream;
+    std::string line;
 
-	// 2. Wczytaj pozycje i ustawienia
-	int currTaskInt;
-	size_t tilesSize = 0;
-	size_t pathSize = 0;
+    // Read map data first
+    while (std::getline(in, line)) {
+        if (line.empty()) break;
+        mapStream << line << "\n";
+    }
 
-	in >> position_ >> chargerId_;
-	in >> currTaskInt;
-	currTask = static_cast<RobotAction>(currTaskInt);
-	in >> cleaningEfficiency;
+    // Load map with UnVisited tiles allowed (robot's memory)
+    map.loadMap(mapStream, true);
 
-	// 3. Wczytaj tilesToCheck
-	in >> tilesSize;
-	tilesToCheck.resize(tilesSize);
-	for (size_t i = 0; i < tilesSize; ++i) {
-		bool val;
-		in >> val;
-		tilesToCheck[i] = val;
-	}
+    // Read robot state data
+    int currTaskInt;
+    size_t tilesSize = 0;
+    size_t pathSize = 0;
 
-	// 4. Wczytaj path
-	in >> pathSize;
-	std::queue<size_t> tempQueue;
-	for (size_t i = 0; i < pathSize; ++i) {
-		size_t elem;
-		in >> elem;
-		tempQueue.push(elem);
-	}
-	path = std::move(tempQueue);
+    in >> position_ >> chargerId_;
+    in >> currTaskInt;
+    currTask = static_cast<RobotAction>(currTaskInt);
+    in >> cleaningEfficiency;
+
+    // Read tilesToCheck
+    in >> tilesSize;
+    tilesToCheck.resize(tilesSize);
+    for (size_t i = 0; i < tilesSize; ++i) {
+        bool val;
+        in >> val;
+        tilesToCheck[i] = val;
+    }
+
+    // Read path
+    in >> pathSize;
+    std::queue<size_t> tempQueue;
+    for (size_t i = 0; i < pathSize; ++i) {
+        size_t elem;
+        in >> elem;
+        tempQueue.push(elem);
+    }
+    path = std::move(tempQueue);
 }
 
-
 void Robot::saveRobot(std::ostream& out) const {
-	// 1. Zapisz map
 	map.saveMap(out);
 	out << "\n";
 
-	// 2. Zapisz pozycje i ustawienia
 	out << position_ << ' ' << chargerId_ << ' ';
 	out << static_cast<int>(currTask) << ' ';
 	out << cleaningEfficiency << ' ';
 
-	// 3. Zapisz tilesToCheck
 	out << tilesToCheck.size() << ' ';
 	for (bool b : tilesToCheck) {
 		out << b << ' ';
 	}
 
-	// 4. Zapisz path
 	out << path.size() << ' ';
 	std::queue<size_t> tempQueue = path;
 	while (!tempQueue.empty()) {
@@ -514,7 +579,7 @@ void Robot::saveRobot(std::ostream& out) const {
 		tempQueue.pop();
 	}
 
-	out << "\n"; // kocowy newline dla czytelnoci
+	out << "\n";
 }
 
 void replaceCharAtIndex(std::string& mapStr, size_t index1D, char newChar, size_t width) {

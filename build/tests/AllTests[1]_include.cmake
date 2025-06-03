@@ -1,0 +1,5 @@
+if(EXISTS "/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/AllTests[1]_tests.cmake")
+  include("/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/AllTests[1]_tests.cmake")
+else()
+  add_test(AllTests_NOT_BUILT AllTests_NOT_BUILT)
+endif()
