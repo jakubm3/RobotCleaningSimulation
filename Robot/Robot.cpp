@@ -261,6 +261,10 @@ void Robot::setPosition(size_t newPosition) {
 
 bool Robot::isRobotValid() const {
     // Robot może mieć UnVisited tiles w swojej pamięci
+    if (!map.isMapValid(true)) {
+        return false;
+    }
+
     if (map.getSize() != map.getWidth() * map.getHeight()) {
         return false;
     }
@@ -278,7 +282,7 @@ bool Robot::isRobotValid() const {
 
 bool Robot::isRobotStateValid() const {
     // Check if map is valid
-    if (!map.isMapValid()) {
+    if (!map.isMapValid(true)) {
         return false;
     }
 
