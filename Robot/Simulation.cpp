@@ -857,7 +857,8 @@ void Simulation::loadFromFile(fs::path filePath) {
     inputFile.close();
 
     try {
-        map.loadMap(mapDataStream);
+        // Load simulation map without UnVisited tiles
+        map.loadMap(mapDataStream, false);
         std::cout << Messages::MAP_DATA_LOADED_SUCCESSFULLY;
     }
     catch (const std::exception& e) {

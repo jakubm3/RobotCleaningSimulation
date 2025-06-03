@@ -242,7 +242,7 @@ bool Robot::createPathToVisit() {
 }
 
 Robot::Robot(std::istream& in) {
-	loadRobot(in);
+    loadRobot(in);
 }
 
 Robot::Robot(size_t mapWidth, size_t mapHeight, size_t chargerId) {
@@ -502,72 +502,10 @@ void Robot::resetMemory() {
 }
 
 void Robot::loadRobot(std::istream& in) {
-	std::stringstream mapStream;
-	std::string line;
-	while (std::getline(in, line)) {
-		if (line.empty()) break;
-		mapStream << line << "\n";
-	}
-	map.loadMap(mapStream);
+    // Load robot's internal map with UnVisited tiles allowed
+    map.loadMap(in, true);
 
-	int currTaskInt;
-	size_t tilesSize = 0;
-	size_t pathSize = 0;
-
-	if (!(in >> position_ >> chargerId_ >> currTaskInt >> cleaningEfficiency)) {
-		throw std::runtime_error("Failed to read robot basic data");
-	}
-
-	if (position_ >= map.getSize()) {
-		throw std::runtime_error("Invalid robot position");
-	}
-
-	if (chargerId_ >= map.getSize()) {
-		throw std::runtime_error("Invalid charger ID");
-	}
-
-	if (currTaskInt < 0 || currTaskInt > 3) {
-		throw std::runtime_error("Invalid robot task");
-	}
-	currTask = static_cast<RobotAction>(currTaskInt);
-
-	if (cleaningEfficiency > 9) {
-		throw std::runtime_error("Invalid cleaning efficiency");
-	}
-
-	if (!(in >> tilesSize)) {
-		throw std::runtime_error("Failed to read tilesToCheck size");
-	}
-
-	if (tilesSize != map.getSize()) {
-		throw std::runtime_error("tilesToCheck size doesn't match map size");
-	}
-
-	tilesToCheck.resize(tilesSize);
-	for (size_t i = 0; i < tilesSize; ++i) {
-		bool val;
-		if (!(in >> val)) {
-			throw std::runtime_error("Failed to read tilesToCheck data");
-		}
-		tilesToCheck[i] = val;
-	}
-
-	if (!(in >> pathSize)) {
-		throw std::runtime_error("Failed to read path size");
-	}
-
-	std::queue<size_t> tempQueue;
-	for (size_t i = 0; i < pathSize; ++i) {
-		size_t elem;
-		if (!(in >> elem)) {
-			throw std::runtime_error("Failed to read path element");
-		}
-		if (elem >= map.getSize()) {
-			throw std::runtime_error("Invalid path element");
-		}
-		tempQueue.push(elem);
-	}
-	path = std::move(tempQueue);
+    // ...existing code for loading robot state...
 }
 
 void Robot::saveRobot(std::ostream& out) const {

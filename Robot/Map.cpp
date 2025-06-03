@@ -4,7 +4,11 @@
 #include <sstream>
 
 Map::Map(std::istream& in) {
-    loadMap(in);
+    loadMap(in, false);
+}
+
+Map::Map(std::istream& in, bool allowUnvisited) {
+    loadMap(in, allowUnvisited);
 }
 
 Map::Map(size_t mapWidth, size_t mapHeight, size_t chargerTileId)
@@ -78,6 +82,10 @@ bool Map::canMoveOn(size_t tileId) const {
 }
 
 void Map::loadMap(std::istream& in) {
+    loadMap(in, false);
+}
+
+void Map::loadMap(std::istream& in, bool allowUnvisited) {
     tiles.clear();
     width = 0;
     height = 0;
@@ -118,8 +126,10 @@ void Map::loadMap(std::istream& in) {
                 }
                 chargerId = idCounter;
             }
+            else if (tileChar == '?' && allowUnvisited) {
+                tiles.push_back(std::make_unique<UnVisited>(idCounter));
+            }
             else {
-                // Remove the UnVisited case - main map should not contain UnVisited tiles
                 throw std::runtime_error("Invalid character in map file: " + std::string(1, tileChar));
             }
             idCounter++;
