@@ -18,7 +18,7 @@ Map::Map(size_t mapWidth, size_t mapHeight, size_t chargerTileId)
         if (i == chargerTileId) {
             tiles.push_back(std::make_unique<Charger>(i));
         } else {
-            tiles.push_back(std::make_unique<Floor>(i, 0));
+            tiles.push_back(std::make_unique<UnVisited>(i));
         }
     }
 }

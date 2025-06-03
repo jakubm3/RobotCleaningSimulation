@@ -869,6 +869,7 @@ void Simulation::loadFromFile(fs::path filePath) {
 
     if (robotDataStream.str().empty()) {
         std::cout << Messages::ROBOT_DATA_NOT_FOUND_INIT;
+        // Create robot with UnVisited memory (constructor will handle this)
         robot = Robot(map.getWidth(), map.getHeight(), map.getChargerId());
         std::cout << Messages::ROBOT_INITIALIZED_WITH << map.getWidth()
             << Messages::ROBOT_INITIALIZED_WITH_CONT1 << map.getHeight()
@@ -876,7 +877,13 @@ void Simulation::loadFromFile(fs::path filePath) {
     }
     else {
         try {
-            robot.loadRobot(robotDataStream);
+            // First create robot with correct dimensions and UnVisited memory
+            robot = Robot(map.getWidth(), map.getHeight(), map.getChargerId());
+
+            // Then load robot state but keep the UnVisited memory structure
+            std::stringstream robotStreamCopy(robotDataStream.str());
+            robot.loadRobot(robotStreamCopy);
+
             std::cout << Messages::ROBOT_DATA_LOADED_SUCCESSFULLY;
         }
         catch (const std::exception& e) {
