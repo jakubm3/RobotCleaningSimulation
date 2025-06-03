@@ -7,6 +7,6 @@ std::unique_ptr<Tile> Charger::clone() const {
 }
 
 bool Charger::isMoveValid() const {
-    return true; // robot może wejść na ładowarkę
+    return true; // Robot can move on charger tiles
 }
 

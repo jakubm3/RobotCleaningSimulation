@@ -4,10 +4,10 @@
 
 class Tile {
 public:
-    static constexpr size_t INVALID_ID = static_cast<size_t>(-1);
+    static constexpr size_t INVALID_ID = SIZE_MAX;
 
 protected:
-    size_t id; // pozycja w kolekcji kafelków w room
+    size_t id;
 
 public:
     Tile(size_t id = 0);
@@ -16,11 +16,11 @@ public:
     // Virtual copy constructor
     virtual std::unique_ptr<Tile> clone() const = 0;
 
+    // Getters and setters
     size_t getId() const noexcept;
     void setId(size_t newId);
 
-    // wirtualne które klasy pochodne muszą zaimplementować
+    // Pure virtual methods
     virtual bool isMoveValid() const = 0;
-
 };
 
