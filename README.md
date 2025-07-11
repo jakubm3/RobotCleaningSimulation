@@ -71,7 +71,7 @@ Simulation:
 Project requirements:
 1. Regular commits - done
 2. Polimorfism - done (Tiles)
-3. Tests - TODO
+3. Tests - done
 4. Collections of pointers - done (Room)
 5. Printing simulation progress - done (Simulation)
 6. Loading from file - done (Simulation)
@@ -83,8 +83,3 @@ Project requirements:
 12. Split responsibilities - done
 13. RAII - done (FileManager)
 
-
-Team main responsibilities:
-	- Gabryel Jundzill: documentation, merging, project plan
-	- Jakub Mierzejewski: tests
-	- Jakub Adamczyk: tests
