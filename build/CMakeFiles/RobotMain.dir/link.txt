@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/RobotMain.dir/Robot/Main.cpp.o CMakeFiles/RobotMain.dir/Robot/Simulation.cpp.o -o RobotMain  libRobotLib.a
