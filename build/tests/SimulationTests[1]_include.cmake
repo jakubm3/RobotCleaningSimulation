@@ -1,5 +1,0 @@
-if(EXISTS "/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/SimulationTests[1]_tests.cmake")
-  include("/home/jakubm/Documents/Cpp/ProjektPROI/209.1-robot-sprzatajacy/build/tests/SimulationTests[1]_tests.cmake")
-else()
-  add_test(SimulationTests_NOT_BUILT SimulationTests_NOT_BUILT)
-endif()
